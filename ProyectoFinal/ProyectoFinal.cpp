@@ -45,7 +45,8 @@ Camera camera;
 
 // ================== TEXTURAS ======================= //
 
-Texture pisoTexture;
+Texture pisoTexture_piedra;
+Texture pisoTexture_tierra;
 
 
 // ================== MODELOS ======================= //
@@ -269,8 +270,11 @@ int main()
 
 
 	// ================== TEXTURAS ======================= //
-	pisoTexture = Texture("Textures/piso.tga");
-	pisoTexture.LoadTextureA();
+	pisoTexture_piedra = Texture("Textures/piso_piedra.tga");
+	pisoTexture_piedra.LoadTextureA();
+
+	pisoTexture_tierra = Texture("Textures/piso_tierra.tga");
+	pisoTexture_tierra.LoadTextureA();
 	
 	// ================== MODELOS ======================= //
 
@@ -332,6 +336,24 @@ int main()
 		0.0f, 0.0f, 0.0f,
 		0.3f, 0.2f, 0.1f);
 	pointLightCount++;
+
+	pointLights[1] = PointLight(1.0f, 1.0f, 1.0f,  //Lampara color blanco
+		0.0f, 5.0f,
+		0.0f, 0.0f, 0.0f,
+		0.3f, 0.2f, 0.1f);
+	pointLightCount++;
+
+	pointLights[2] = PointLight(1.0f, 1.0f, 1.0f,  //Lampara color blanco
+		0.0f, 5.0f,
+		0.0f, 0.0f, 0.0f,
+		0.3f, 0.2f, 0.1f);
+	pointLightCount++;
+
+	//pointLights[3] = PointLight(1.0f, 0.698f, 0.0f,  //Lampara china
+	//	0.0f, 5.0f,
+	//	0.0f, 0.0f, 0.0f,
+	//	0.3f, 0.2f, 0.1f);
+	//pointLightCount++;
 
 	// ============== SPOTLIGHTS ===================== //
 	
@@ -428,48 +450,104 @@ int main()
 		// ================================================================= LUCES FIN ================================================================
 		
 		// ----------------------------------------- PISO -----------------------------------------
+		// Piedra
 		model = identidad;
-		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(30.0f, 1.0f, 30.0f));
+		model = glm::translate(model, glm::vec3(-100.0f, -1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(20.0f, 1.0f, 30.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		pisoTexture.UseTexture();
+		pisoTexture_piedra.UseTexture();
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		meshList[2]->RenderMesh();
+
+		
+		// Tierra
+		model = identidad;
+		model = glm::translate(model, glm::vec3(200.0f, -1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(10.0f, 1.0f, 30.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		pisoTexture_tierra.UseTexture();
 		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		meshList[2]->RenderMesh();
 				
 		// ================================================== Proyecto final  ================================================================= //
-		
 
+		// QUETZALLI ZARATE MENES
+		
 		// ----------------------------------------- LAMPARA -----------------------------------------
+		// Lampara 1
 		model = identidad;
-		model = glm::translate(model, glm::vec3(30.0, -1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(100.0f, -1.0f, 150.0f));
+		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 		pos_obj = glm::vec3(model[3]);
 		pos_obj.y += 7.0f;
 		pointLights[0].SetPos(pos_obj);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		lampara.RenderModel();
 
-		// ----------------------------------------- LETRERO -----------------------------------------
+		// Lampara 2
 		model = identidad;
-		model = glm::translate(model, glm::vec3(60.0, -1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(60.0f, -1.0f, -120.0f));
+		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+		pos_obj = glm::vec3(model[3]);
+		pos_obj.y += 7.0f;
+		pointLights[1].SetPos(pos_obj);
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		lampara.RenderModel();
+
+		// Lampara 3
+		model = identidad;
+		model = glm::translate(model, glm::vec3(20.0f, -1.0f, 100.0f));
+		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+		pos_obj = glm::vec3(model[3]);
+		pos_obj.y += 7.0f;
+		pointLights[2].SetPos(pos_obj);
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		lampara.RenderModel();
+
+		// ----------------------------------------- LETRERO -----------------------------------------
+		// Cartel 1 
+		model = identidad;
+		model = glm::translate(model, glm::vec3(85.0f, -1.0f, 150.0f));
+		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		letrero.RenderModel();
+
+		// Cartel 2 
+		model = identidad;
+		model = glm::translate(model, glm::vec3(45.0f, -1.0f, -120.0f));
+		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		letrero.RenderModel();
+
+		// Cartel 3
+		model = identidad;
+		model = glm::translate(model, glm::vec3(5.0f, -1.0f, 100.0f));
+		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		letrero.RenderModel();
 
 		// ----------------------------------------- LIBRERO -----------------------------------------
 		model = identidad;
-		model = glm::translate(model, glm::vec3(90.0, -1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(280.0, -1.0f, 100.0f));
+		model = glm::scale(model, glm::vec3(6.0f, 6.0f, 6.0f));
+		model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		librero_medieval.RenderModel();
 
 		// ----------------------------------------- ARBOL -----------------------------------------
 		model = identidad;
-		model = glm::translate(model, glm::vec3(120.0, -1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(100.0, -1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(25.0f, 25.0f, 25.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		arbol.RenderModel();
 
 		// ----------------------------------------- CASTILLO -----------------------------------------
 		model = identidad;
-		model = glm::translate(model, glm::vec3(150.0, -1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(200.0, -1.0f, -200.0f));
+		model = glm::scale(model, glm::vec3(7.0f, 7.0f, 7.0f));
+		model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		castillo.RenderModel();
 						
