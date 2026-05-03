@@ -48,6 +48,8 @@ Camera camera;
 Texture pisoTexture_piedra;
 Texture pisoTexture_tierra;
 
+Texture FuegoTexture;
+
 
 // ================== MODELOS ======================= //
 
@@ -57,18 +59,30 @@ Model castillo;
 Model arbol;
 Model librero_medieval;
 
+Model zeppelin_base;
+Model zeppelin_helice_abajo;
+Model zeppelin_helice_arriba;
+
+
 // ================== LUCES ======================= //
 
-// luz direccional
-DirectionalLight mainLight;
+// luz direccional Dia
+DirectionalLight mainLightDia;
+DirectionalLight mainLightNoche;
 //para declarar varias luces de tipo pointlight
 PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
 
-// ========================================= //
+// ================== SKYBOX ======================= //
+
+Skybox skyboxDia;
+Skybox skyboxNoche;
+
+float horarioDiaNoche = 0.0f;
+bool flagDiaNoche = true;
 
 
-Skybox skybox;
+// ================================================= //
 
 //materiales
 Material Material_brillante;
@@ -148,6 +162,26 @@ void CreateObjects()
 		10.0f, 0.0f, 10.0f,		10.0f, 10.0f,	0.0f, -1.0f, 0.0f
 	};
 
+	// ========================================= TEXTURAS ========================================= //
+	unsigned int fuegoIndices[] = {
+	   0, 1, 2,
+	   0, 2, 3,
+	   4,5,6,
+	   4,6,7
+	};
+
+	GLfloat fuegoVertices[] = {
+		-0.5f, -0.5f, 0.0f,		0.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, 0.0f,		1.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		0.5f, 0.5f, 0.0f,		1.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		-0.5f, 0.5f, 0.0f,		0.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+
+		0.0f, -0.5f, -0.5f,		0.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		0.0f, -0.5f, 0.5f,		1.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		0.0f, 0.5f, 0.5f,		1.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		0.0f, 0.5f, -0.5f,		0.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+
+	};
 	
 
 
@@ -167,6 +201,13 @@ void CreateObjects()
 	Mesh *obj3 = new Mesh();
 	obj3->CreateMesh(floorVertices, floorIndices, 32, 6);
 	meshList.push_back(obj3);
+
+
+	// 3 Fuego 
+	Mesh* obj4 = new Mesh();
+	obj4->CreateMesh(fuegoVertices, fuegoIndices, 64, 12);
+	meshList.push_back(obj4);
+
 
 	calcAverageNormals(indices, 12, vertices, 32, 8, 5);
 
@@ -265,8 +306,8 @@ int main()
 	CreateObjects();
 	CrearDado();
 	CreateShaders();
-
-	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.3f, 0.5f);
+																					// ajuste velocidad camara 0.3f to 1.5f
+	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 1.5f, 0.5f);
 
 
 	// ================== TEXTURAS ======================= //
@@ -275,6 +316,9 @@ int main()
 
 	pisoTexture_tierra = Texture("Textures/piso_tierra.tga");
 	pisoTexture_tierra.LoadTextureA();
+
+	FuegoTexture = Texture("Textures/fuego.tga");
+	FuegoTexture.LoadTextureA();
 	
 	// ================== MODELOS ======================= //
 
@@ -293,13 +337,18 @@ int main()
 	arbol = Model();
 	arbol.LoadModel("Models/arbol.obj");
 
+	zeppelin_base = Model();
+	zeppelin_base.LoadModel("Models/zeppelin_base.obj");
 
+	zeppelin_helice_abajo = Model();
+	zeppelin_helice_abajo.LoadModel("Models/zeppelin_helice_abajo.obj");
+
+	zeppelin_helice_arriba = Model();
+	zeppelin_helice_arriba.LoadModel("Models/zeppelin_helice_arriba.obj");
 
 
 	// ========================================= //
-
-
-	std::vector<std::string> skyboxFaces;
+		
 	/*skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_lf.tga");
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_dn.tga");
@@ -307,24 +356,47 @@ int main()
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_bk.tga");
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_ft.tga");*/
 
-	skyboxFaces.push_back("Textures/Skybox/pos_rt.jpg");
-	skyboxFaces.push_back("Textures/Skybox/neg_lf.jpg");
-	skyboxFaces.push_back("Textures/Skybox/neg_dn.jpg");
-	skyboxFaces.push_back("Textures/Skybox/pos_up.jpg");
-	skyboxFaces.push_back("Textures/Skybox/pos_bk.jpg");
-	skyboxFaces.push_back("Textures/Skybox/neg_ft.jpg");
+	// ================== SKYBOX DIA ======================= //
+	std::vector<std::string> skyboxFacesDia;
 
+	skyboxFacesDia.push_back("Textures/Skybox/Dia/pos_rt.jpg");
+	skyboxFacesDia.push_back("Textures/Skybox/Dia/neg_lf.jpg");
+	skyboxFacesDia.push_back("Textures/Skybox/Dia/neg_dn.jpg");
+	skyboxFacesDia.push_back("Textures/Skybox/Dia/pos_up.jpg");
+	skyboxFacesDia.push_back("Textures/Skybox/Dia/pos_bk.jpg");
+	skyboxFacesDia.push_back("Textures/Skybox/Dia/neg_ft.jpg");
 
-	skybox = Skybox(skyboxFaces);
+	skyboxDia = Skybox(skyboxFacesDia);
+
+	// ================== SKYBOX NOCHE ======================= //
+	std::vector<std::string> skyboxFacesNoche;
+
+	skyboxFacesNoche.push_back("Textures/Skybox/Noche/pos_rt.png");
+	skyboxFacesNoche.push_back("Textures/Skybox/Noche/neg_lf.png");
+	skyboxFacesNoche.push_back("Textures/Skybox/Noche/neg_dn.png");
+	skyboxFacesNoche.push_back("Textures/Skybox/Noche/pos_up.png");
+	skyboxFacesNoche.push_back("Textures/Skybox/Noche/pos_bk.png");
+	skyboxFacesNoche.push_back("Textures/Skybox/Noche/neg_ft.png");
+
+	skyboxNoche = Skybox(skyboxFacesNoche);
+
 
 	Material_brillante = Material(4.0f, 256);
 	Material_opaco = Material(0.3f, 4);
 
 	// ================== LUCES ======================= //
-	//luz direccional, sólo 1 y siempre debe de existir
-	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
+	// 
+	// ============== Directional Light ==================== //
+	//luz direccional Dia
+	mainLightDia = DirectionalLight(1.0f, 1.0f, 1.0f,
 		0.3f, 0.3f,
 		0.0f, 0.0f, -1.0f);
+
+	mainLightNoche = DirectionalLight(0.4f, 0.4f, 0.6f,
+		0.35f, 0.3f,
+		0.0f, 0.0f, -1.0f);
+
+	//luz direccional Noche
 	
 	// ============== POINTLIGHTS ==================== //
 	//contador de luces puntuales
@@ -332,21 +404,21 @@ int main()
 	//Declaración de primer luz puntual
 	// ---------------------------------------- Lampara blanca
 	pointLights[0] = PointLight(1.0f, 1.0f, 1.0f,  //Lampara color blanco
-		0.0f, 5.0f,
+		0.0f, 10.0f,
 		0.0f, 0.0f, 0.0f,
-		0.3f, 0.2f, 0.1f);
+		0.3f, 0.06f, 0.01f);
 	pointLightCount++;
 
 	pointLights[1] = PointLight(1.0f, 1.0f, 1.0f,  //Lampara color blanco
-		0.0f, 5.0f,
+		0.0f, 10.0f,
 		0.0f, 0.0f, 0.0f,
-		0.3f, 0.2f, 0.1f);
+		0.3f, 0.06f, 0.01f);
 	pointLightCount++;
 
 	pointLights[2] = PointLight(1.0f, 1.0f, 1.0f,  //Lampara color blanco
-		0.0f, 5.0f,
+		0.0f, 10.0f,
 		0.0f, 0.0f, 0.0f,
-		0.3f, 0.2f, 0.1f);
+		0.3f, 0.06f, 0.01f);
 	pointLightCount++;
 
 	//pointLights[3] = PointLight(1.0f, 0.698f, 0.0f,  //Lampara china
@@ -372,7 +444,7 @@ int main()
 
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
-		uniformSpecularIntensity = 0, uniformShininess = 0;
+		uniformSpecularIntensity = 0, uniformShininess = 0, uniformTextureOffset = 0;
 	GLuint uniformColor = 0;
 	glm::mat4 projection = glm::perspective(45.0f, (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 1000.0f);
 	
@@ -384,6 +456,8 @@ int main()
 	//Configuration
 	GLfloat now = 0.0f;
 	glm::vec3 lowerLight;
+
+
 	
 	
 	// =================== Variables ================= //
@@ -395,8 +469,47 @@ int main()
 
 	identidad = glm::mat4(1.0);
 
-	// =================== ANIMACION ================= //
+	// =================== ANIMACION GENERAL ================= //
 	glm::vec3 pos_obj;
+	glm::vec2 toffset = glm::vec2(0.0f, 0.0f);
+
+	// ==================== ZEPPELIN ================ //
+	float heliceGiro = 0.0f;
+
+	float tiempoFuego = 0.0;
+	float toffsetfuegou = 0.0f;
+	float toffsetfuegov = 0.0f;
+
+	// Variables Zeppelin
+	// Movimiento
+	float tiempoZeppelin = 0.0f;
+	float velocidadZeppelin = 0.25f;
+
+	// Forma de la elipse
+	float radioZeppelinX = 100.0f;
+	float radioZeppelinZ = 80.0f;
+
+	// Centro
+	float centroZeppelinX = 0.0f;
+	float centroZeppelinY = 50.0f;
+	float centroZeppelinZ = 0.0f;
+
+	// Ángulo inicial (elige dónde quieres que empiece)
+	float anguloInicioZeppelin = 90.0f * toRadians;
+
+	// Posición inicial 
+	float posZeppelinX = centroZeppelinX + radioZeppelinX * cos(anguloInicioZeppelin);
+	float posZeppelinZ = centroZeppelinZ + radioZeppelinZ * sin(anguloInicioZeppelin);
+
+	// Dirección inicial 
+	float dirZeppelinX = -radioZeppelinX * sin(anguloInicioZeppelin);
+	float dirZeppelinZ = radioZeppelinZ * cos(anguloInicioZeppelin);
+
+	float giroZeppelin = atan2(dirZeppelinZ, -dirZeppelinX);
+	
+	float anguloActualZeppelin = 0.0f;
+
+	// ==================== ZEPPELIN ================ //
 
 	
 
@@ -416,13 +529,28 @@ int main()
 		// Clear the window
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		skybox.DrawSkybox(camera.calculateViewMatrix(), projection);
+
+		// // ================================================================= SKYBOX  ========================================================================================================= //
+		// Dia  -    0  -> 30 seg
+		// noche -   31 -> 60 seg
+		horarioDiaNoche = fmod(glfwGetTime(), 80.0f);
+		if (horarioDiaNoche <= 40.0f) flagDiaNoche = true;
+		else flagDiaNoche = false;
+
+		//skyboxDia.DrawSkybox(camera.calculateViewMatrix(), projection);
+		
+		if(flagDiaNoche) skyboxDia.DrawSkybox(camera.calculateViewMatrix(), projection);
+		else skyboxNoche.DrawSkybox(camera.calculateViewMatrix(), projection);
+		
+		// ================================================================= SKYBOX FIN ========================================================================================================= //
+		
 		shaderList[0].UseShader();
 		uniformModel = shaderList[0].GetModelLocation();
 		uniformProjection = shaderList[0].GetProjectionLocation();
 		uniformView = shaderList[0].GetViewLocation();
 		uniformEyePosition = shaderList[0].GetEyePositionLocation();
 		uniformColor = shaderList[0].getColorLocation();
+		uniformTextureOffset = shaderList[0].getOffsetLocation(); // para la textura con movimiento
 		
 		//información en el shader de intensidad especular y brillo
 		uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
@@ -432,10 +560,15 @@ int main()
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 		glUniform3f(uniformEyePosition, camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
 
+		// Para que no afecte a otras texturas
+		toffset = glm::vec2(0.0f, 0.0f);
+		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+
 		// ================================================================= LUCES INICIO ================================================================
 		
 		// MAIN
-		shaderList[0].SetDirectionalLight(&mainLight);
+		if (flagDiaNoche) shaderList[0].SetDirectionalLight(&mainLightDia);
+		else shaderList[0].SetDirectionalLight(&mainLightNoche);
 		
 		lowerLight = camera.getCameraPosition();
 		lowerLight.y -= 0.3f;
@@ -445,7 +578,9 @@ int main()
 		shaderList[0].SetSpotLights(spotLights, spotLightCount);
 		
 		// POINTLIGHTS
-		shaderList[0].SetPointLights(pointLights, pointLightCount);
+		// Ciclo Dia y Noche
+		if (flagDiaNoche) shaderList[0].SetPointLights(pointLights, 0);
+		else shaderList[0].SetPointLights(pointLights, pointLightCount);
 		
 		// ================================================================= LUCES FIN ================================================================
 		
@@ -478,30 +613,33 @@ int main()
 		// ----------------------------------------- LAMPARA -----------------------------------------
 		// Lampara 1
 		model = identidad;
-		model = glm::translate(model, glm::vec3(100.0f, -1.0f, 150.0f));
+		model = glm::translate(model, glm::vec3(80.0f, -1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 		pos_obj = glm::vec3(model[3]);
-		pos_obj.y += 7.0f;
+		pos_obj.y += 30.0f;
+		pos_obj.x -= 1.0f;
 		pointLights[0].SetPos(pos_obj);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		lampara.RenderModel();
 
 		// Lampara 2
 		model = identidad;
-		model = glm::translate(model, glm::vec3(60.0f, -1.0f, -120.0f));
+		model = glm::translate(model, glm::vec3(-10.0f, -1.0f, 120.0f));
 		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 		pos_obj = glm::vec3(model[3]);
-		pos_obj.y += 7.0f;
+		pos_obj.y += 30.0f;
+		pos_obj.x -= 1.0f;
 		pointLights[1].SetPos(pos_obj);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		lampara.RenderModel();
 
 		// Lampara 3
 		model = identidad;
-		model = glm::translate(model, glm::vec3(20.0f, -1.0f, 100.0f));
+		model = glm::translate(model, glm::vec3(-10.0f, -1.0f, -120.0f));
 		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 		pos_obj = glm::vec3(model[3]);
-		pos_obj.y += 7.0f;
+		pos_obj.y += 30.0f;
+		pos_obj.x -= 1.0f;
 		pointLights[2].SetPos(pos_obj);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		lampara.RenderModel();
@@ -509,48 +647,163 @@ int main()
 		// ----------------------------------------- LETRERO -----------------------------------------
 		// Cartel 1 
 		model = identidad;
-		model = glm::translate(model, glm::vec3(85.0f, -1.0f, 150.0f));
+		model = glm::translate(model, glm::vec3(65.0f, -1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		letrero.RenderModel();
 
 		// Cartel 2 
 		model = identidad;
-		model = glm::translate(model, glm::vec3(45.0f, -1.0f, -120.0f));
+		model = glm::translate(model, glm::vec3(-30.0f, -1.0f, -120.0f));
 		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		letrero.RenderModel();
 
 		// Cartel 3
 		model = identidad;
-		model = glm::translate(model, glm::vec3(5.0f, -1.0f, 100.0f));
+		model = glm::translate(model, glm::vec3(-30.0f, -1.0f, 100.0f));
 		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		letrero.RenderModel();
 
 		// ----------------------------------------- LIBRERO -----------------------------------------
 		model = identidad;
-		model = glm::translate(model, glm::vec3(280.0, -1.0f, 100.0f));
+		model = glm::translate(model, glm::vec3(260.0, -1.0f, 100.0f));
 		model = glm::scale(model, glm::vec3(6.0f, 6.0f, 6.0f));
 		model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		librero_medieval.RenderModel();
 
 		// ----------------------------------------- ARBOL -----------------------------------------
+		// 1
 		model = identidad;
-		model = glm::translate(model, glm::vec3(100.0, -1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(25.0f, 25.0f, 25.0f));
+		model = glm::translate(model, glm::vec3(120.0, -1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(30.0f, 30.0f, 30.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		arbol.RenderModel();
+
+		// 2
+		model = identidad;
+		model = glm::translate(model, glm::vec3(120.0, -1.0f, -250.0f));
+		model = glm::scale(model, glm::vec3(30.0f, 30.0f, 30.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		arbol.RenderModel();
+
+		// 3
+		model = identidad;
+		model = glm::translate(model, glm::vec3(275.0, -1.0f, -100.0f));
+		model = glm::scale(model, glm::vec3(30.0f, 30.0f, 30.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		arbol.RenderModel();
+
+		// 4
+		model = identidad;
+		model = glm::translate(model, glm::vec3(120.0, -1.0f, 250.0f));
+		model = glm::scale(model, glm::vec3(30.0f, 30.0f, 30.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		arbol.RenderModel();
+
+		// 5
+		model = identidad;
+		model = glm::translate(model, glm::vec3(275.0, -1.0f, 100.0f));
+		model = glm::scale(model, glm::vec3(30.0f, 30.0f, 30.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		arbol.RenderModel();
 
 		// ----------------------------------------- CASTILLO -----------------------------------------
 		model = identidad;
 		model = glm::translate(model, glm::vec3(200.0, -1.0f, -200.0f));
-		model = glm::scale(model, glm::vec3(7.0f, 7.0f, 7.0f));
+		model = glm::scale(model, glm::vec3(7.5f, 7.5f, 7.5f));
 		model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		castillo.RenderModel();
-						
+		
+
+		// ----------------------------------------- ZEPPELIN -----------------------------------------
+		if (mainWindow.animacionZeppelin()) {
+			tiempoZeppelin += 0.01f * deltaTime * velocidadZeppelin;
+
+			anguloActualZeppelin = anguloInicioZeppelin + tiempoZeppelin;
+
+			posZeppelinX = centroZeppelinX + radioZeppelinX * cos(anguloActualZeppelin);
+			posZeppelinZ = centroZeppelinZ + radioZeppelinZ * sin(anguloActualZeppelin);
+
+			dirZeppelinX = -radioZeppelinX * sin(anguloActualZeppelin);
+			dirZeppelinZ = radioZeppelinZ * cos(anguloActualZeppelin);
+
+			giroZeppelin = atan2(dirZeppelinZ, -dirZeppelinX);
+
+			// ----------------------- Giro helice -------------------------
+			heliceGiro += deltaTime * 3.0f;
+			if (heliceGiro >= 360.0f) heliceGiro = 0.0f;
+
+			// ----------------------- TEXTURA FUEGO -------------------
+			tiempoFuego += 0.05 * deltaTime;
+
+			// Movimiento ondulado en U y V
+			toffsetfuegou = sin(tiempoFuego * 3.0f) * 0.04f;
+			toffsetfuegov = 0.0f;
+
+			if (toffsetfuegov > 1.0f) tiempoFuego = 0.0f;
+
+			toffset = glm::vec2(toffsetfuegou, toffsetfuegov);
+
+			model = modelaux;
+			model = glm::translate(model, glm::vec3(7.5f, 0.6f, 0.0f));
+			model = glm::scale(model, glm::vec3(1.7f, 1.7f, 1.7f));
+			model = glm::rotate(model, -90.0f * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+			glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			//blending: transparencia o traslucidez
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			FuegoTexture.UseTexture();
+			Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+			meshList[3]->RenderMesh();
+			glDisable(GL_BLEND);
+		}
+		// Para que no afecte a otras texturas
+		toffset = glm::vec2(0.0f, 0.0f);
+		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+
+		// 
+		// Zeppelin base
+		model = identidad;
+		model = glm::translate(model, glm::vec3(posZeppelinX,centroZeppelinY,posZeppelinZ));
+		model = glm::rotate(model, giroZeppelin, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(2.5f, 2.5f, 2.5f));
+		modelaux = model;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		zeppelin_base.RenderModel();
+
+		// helice arriba
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(7.0f, 9.0f, 0.0f));
+		model = glm::rotate(model, heliceGiro * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		zeppelin_helice_arriba.RenderModel();
+
+		// helice izquierda
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(3.8f, 0.7f, 1.75f));
+		model = glm::rotate(model, heliceGiro * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		zeppelin_helice_abajo.RenderModel();
+
+		// helice derecha
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(3.8f, 0.7f, -1.75f));
+		model = glm::rotate(model, heliceGiro * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		zeppelin_helice_abajo.RenderModel();
+		
+				
+		// Para que no afecte a otras texturas
+		toffset = glm::vec2(0.0f, 0.0f);
+		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+
+
+
 		// ==================================================================================================================================== //
 
 		// EJEMPLO TRANSPARENCIA

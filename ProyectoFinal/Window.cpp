@@ -15,29 +15,11 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	height = windowHeight;
 	muevex = 2.0f;
 
-	//Posicion y banderas de prender nave
-	posNave = 0.0f;
-	estadoNave = 1;
-
-	// ========== Práctica (8) =========== //
-	posPezX = 0.0f;
-	posPezY = 0.0f;
-
-	pezSubiendo = true;
-	direccionPez = 1;
-
-	spotDirPez = 1;
-
-	luzLampara = false;
-	luzPez = false;
-	// ========================================= //
+	// ============================= FLAGS ======================
+	flagAnimacionZeppelin = false;
 
 
-	OpcionColorCoche = 0;
-	valor_switch = false;
-	
-	//Ejericio clase
-	posCoche = 0.0f;
+	// ==========================================================
 	
 	for (size_t i = 0; i < 1024; i++)
 	{
@@ -130,104 +112,11 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 
-	// ------------------ Movimiento Nave -----------------------
-	if (key == GLFW_KEY_O)
-	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
-		{
-			theWindow->posNave -= 1.0f;
-			theWindow->estadoNave = 1;
-		}
+	// ------------------ Movimiento Zeppelin -----------------------
+	if (key == GLFW_KEY_Z && action == GLFW_PRESS){
+		theWindow->flagAnimacionZeppelin = !theWindow->flagAnimacionZeppelin;
 	}
-
-	if (key == GLFW_KEY_L)
-	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
-		{
-			theWindow->posNave += 1.0f;
-			theWindow->estadoNave = -1;
-		}
-	}
-	
-	// ------------------ Movimiento Pez -----------------------
-	if (key == GLFW_KEY_J)
-	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
-		{
-			theWindow->posPezX -= 0.1f;
-			theWindow->direccionPez = -1;
-
-			if (theWindow->posPezX < -7.0f)
-				theWindow->posPezX = -7.0f;
-
-			if (theWindow->posPezY >= 2.0f)
-				theWindow->pezSubiendo = false;
-
-			if (theWindow->posPezY <= -2.0f)
-				theWindow->pezSubiendo = true;
-
-			if (theWindow->pezSubiendo)
-				theWindow->posPezY += 0.2f;
-			else
-				theWindow->posPezY -= 0.2f;
-		}
-	}
-	if (key == GLFW_KEY_K)
-	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
-		{
-			theWindow->posPezX += 0.1f;
-			theWindow->direccionPez = 1;
-
-			if (theWindow->posPezX > 7.0f)
-				theWindow->posPezX = 7.0f;
-
-			if (theWindow->posPezY >= 2.0f)
-				theWindow->pezSubiendo = false;
-
-			if (theWindow->posPezY <= -2.0f)
-				theWindow->pezSubiendo = true;
-
-			if (theWindow->pezSubiendo)
-				theWindow->posPezY += 0.2f;
-			else
-				theWindow->posPezY -= 0.2f;
-		}
-	}
-	// ------------------ Movimiento Pez FIN -----------------------
-
-	// ========== Práctica (8) Ejercicio3 tener luces separadas =========== //
-	if (key == GLFW_KEY_P && action == GLFW_PRESS)
-	{
-		theWindow->luzLampara = !theWindow->luzLampara;
-		//printf("Luz lampara: %d'\n", theWindow->luzLampara);
-	}
-
-	if (key == GLFW_KEY_I && action == GLFW_PRESS)
-	{
-		theWindow->luzPez = !theWindow->luzPez;
-		//printf("Luz pez: %d'\n", theWindow->luzPez);
-	}
-	// ========== Práctica (8) Ejercicio3 tener luces separadas =========== //
-
-	if (key == GLFW_KEY_X && action == GLFW_PRESS)
-	{
-		theWindow->spotDirPez = 1;
-	}
-	if (key == GLFW_KEY_Y && action == GLFW_PRESS)
-	{
-		theWindow->spotDirPez = 2;
-	}
-	if (key == GLFW_KEY_Z && action == GLFW_PRESS)
-	{
-		theWindow->spotDirPez = 3;
-	}
-
-	if (key == GLFW_KEY_C && action == GLFW_PRESS)
-	{
-		if (theWindow->OpcionColorCoche >= 5) theWindow->OpcionColorCoche = 0; 
-		else theWindow->OpcionColorCoche += 1;
-	}
+		
 
 
 	if (key >= 0 && key < 1024)
