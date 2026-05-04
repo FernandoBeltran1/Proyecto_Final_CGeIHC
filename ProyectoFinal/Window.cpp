@@ -18,6 +18,10 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	// ============================= FLAGS ======================
 	flagAnimacionZeppelin = false;
 
+	// -------- Spotlights --------
+	flagLuzEstatua = false;
+	flagLuzTren = false;
+
 
 	// ==========================================================
 	
@@ -113,11 +117,18 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 	}
 
 	// ------------------ Movimiento Zeppelin -----------------------
-	if (key == GLFW_KEY_Z && action == GLFW_PRESS){
+	if (key == GLFW_KEY_X && action == GLFW_PRESS){
 		theWindow->flagAnimacionZeppelin = !theWindow->flagAnimacionZeppelin;
 	}
 		
+	// ------------------ Prende apaga spotlights -----------------------
+	if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+		theWindow->flagLuzTren = !theWindow->flagLuzTren;
+	}
 
+	if (key == GLFW_KEY_E && action == GLFW_PRESS) {
+		theWindow->flagLuzEstatua = !theWindow->flagLuzEstatua;
+	}
 
 	if (key >= 0 && key < 1024)
 	{

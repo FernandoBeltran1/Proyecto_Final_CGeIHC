@@ -18,6 +18,9 @@ public:
 	// ---- animacion zeppelin
 	bool animacionZeppelin() { return flagAnimacionZeppelin; }
 
+	bool luzTren() { return flagLuzTren; }
+	bool luzEstatua() { return flagLuzEstatua; }
+
 
 	// ============================================================================
 
@@ -44,6 +47,7 @@ private:
 	
 	// ============================ Entradas por teclado ==========================
 	bool flagAnimacionZeppelin;
+	bool flagLuzTren, flagLuzEstatua;
 
 	// ========================================= //
 

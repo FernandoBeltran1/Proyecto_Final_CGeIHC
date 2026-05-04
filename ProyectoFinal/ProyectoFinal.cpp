@@ -63,6 +63,8 @@ Model zeppelin_base;
 Model zeppelin_helice_abajo;
 Model zeppelin_helice_arriba;
 
+Model reflector;
+
 
 // ================== LUCES ======================= //
 
@@ -71,7 +73,13 @@ DirectionalLight mainLightDia;
 DirectionalLight mainLightNoche;
 //para declarar varias luces de tipo pointlight
 PointLight pointLights[MAX_POINT_LIGHTS];
-SpotLight spotLights[MAX_SPOT_LIGHTS];
+
+// Arreglos Spotlights
+SpotLight spotLights1[MAX_SPOT_LIGHTS];
+SpotLight spotLights2[MAX_SPOT_LIGHTS];
+SpotLight spotLights3[MAX_SPOT_LIGHTS];
+SpotLight spotLights4[MAX_SPOT_LIGHTS];
+
 
 // ================== SKYBOX ======================= //
 
@@ -294,7 +302,7 @@ void CrearDado()
 
 	Mesh* dado = new Mesh();
 	dado->CreateMesh(cubo_vertices, cubo_indices, 192, 36);
-	meshList.push_back(dado);
+	meshList.push_back(dado);  
 
 }
 
@@ -345,6 +353,9 @@ int main()
 
 	zeppelin_helice_arriba = Model();
 	zeppelin_helice_arriba.LoadModel("Models/zeppelin_helice_arriba.obj");
+
+	reflector = Model();
+	reflector.LoadModel("Models/reflector.obj");
 
 
 	// ========================================= //
@@ -403,22 +414,22 @@ int main()
 	unsigned int pointLightCount = 0;
 	//Declaración de primer luz puntual
 	// ---------------------------------------- Lampara blanca
-	pointLights[0] = PointLight(1.0f, 1.0f, 1.0f,  //Lampara color blanco
+	pointLights[0] = PointLight(0.992f, 0.925f, 0.686f,  //Lampara color blanco
 		0.0f, 10.0f,
 		0.0f, 0.0f, 0.0f,
-		0.3f, 0.06f, 0.01f);
+		0.3f, 0.025f, 0.003f);
 	pointLightCount++;
 
-	pointLights[1] = PointLight(1.0f, 1.0f, 1.0f,  //Lampara color blanco
+	pointLights[1] = PointLight(0.992f, 0.925f, 0.686f,  //Lampara color blanco
 		0.0f, 10.0f,
 		0.0f, 0.0f, 0.0f,
-		0.3f, 0.06f, 0.01f);
+		0.3f, 0.025f, 0.003f);
 	pointLightCount++;
 
-	pointLights[2] = PointLight(1.0f, 1.0f, 1.0f,  //Lampara color blanco
+	pointLights[2] = PointLight(0.992f, 0.925f, 0.686f,  //Lampara color blanco
 		0.0f, 10.0f,
 		0.0f, 0.0f, 0.0f,
-		0.3f, 0.06f, 0.01f);
+		0.3f, 0.025f, 0.003f);
 	pointLightCount++;
 
 	//pointLights[3] = PointLight(1.0f, 0.698f, 0.0f,  //Lampara china
@@ -427,18 +438,95 @@ int main()
 	//	0.3f, 0.2f, 0.1f);
 	//pointLightCount++;
 
-	// ============== SPOTLIGHTS ===================== //
+	// ================================================== SPOTLIGHTS ===================================== //
 	
 	// Contador de spotlights
-	unsigned int spotLightCount = 0;
+	unsigned int spotLightCount1 = 0;
+	unsigned int spotLightCount2 = 0;
+	unsigned int spotLightCount3 = 0;
+	unsigned int spotLightCount4 = 0;
+
+	// --------------------- Arreglo 1 -----------------
 	//linterna pegada a la cámara siempre VA
-	spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f,
+	spotLights1[0] = SpotLight(1.0f, 1.0f, 1.0f,
 		0.0f, 2.0f,
-		0.0f, 0.0f, 0.0f,
-		0.0f, -1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f,  // Pos
+		0.0f, -1.0f, 0.0f, // DIR
 		1.0f, 0.0f, 0.0f,
 		7.0f);
-	spotLightCount++;
+	spotLightCount1++;
+
+	// Tren
+	spotLights1[1] = SpotLight(1.0f, 1.0f, 1.0f,
+		1.0f, 2.0f,
+		0.0f, 0.0f, 0.0f,
+		-2.0f, -5.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		20.0f);
+	spotLightCount1++;
+
+	// Estatua
+	spotLights1[2] = SpotLight(1.0f, 1.0f, 1.0f,
+		1.0f, 2.0f,
+		0.0f, 0.0f, 0.0f,
+		-2.0f, -5.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		20.0f);
+	spotLightCount1++;
+	// -------------------------------------------------
+
+	// --------------------- Arreglo 2 -----------------
+	//linterna pegada a la cámara siempre VA
+	spotLights2[0] = SpotLight(1.0f, 1.0f, 1.0f,
+		0.0f, 2.0f,
+		0.0f, 0.0f, 0.0f,  // Pos
+		0.0f, -1.0f, 0.0f, // DIR
+		1.0f, 0.0f, 0.0f,
+		7.0f);
+	spotLightCount2++;
+
+	// Tren
+	spotLights2[1] = SpotLight(1.0f, 1.0f, 1.0f,
+		1.0f, 2.0f,
+		0.0f, 0.0f, 0.0f,
+		-2.0f, -5.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		20.0f);
+	spotLightCount2++;
+
+	// -------------------------------------------------
+
+	// --------------------- Arreglo 3 -----------------
+	//linterna pegada a la cámara siempre VA
+	spotLights3[0] = SpotLight(1.0f, 1.0f, 1.0f,
+		0.0f, 2.0f,
+		0.0f, 0.0f, 0.0f,  // Pos
+		0.0f, -1.0f, 0.0f, // DIR
+		1.0f, 0.0f, 0.0f,
+		7.0f);
+	spotLightCount3++;
+
+	// Estatua
+	spotLights3[1] = SpotLight(1.0f, 1.0f, 1.0f,
+		1.0f, 2.0f,
+		0.0f, 0.0f, 0.0f,
+		-2.0f, -5.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		20.0f);
+	spotLightCount3++;
+	// -------------------------------------------------
+
+	// --------------------- Arreglo 4 -----------------
+	//linterna pegada a la cámara siempre VA
+	spotLights4[0] = SpotLight(1.0f, 1.0f, 1.0f,
+		0.0f, 2.0f,
+		0.0f, 0.0f, 0.0f,  // Pos
+		0.0f, -1.0f, 0.0f, // DIR
+		1.0f, 0.0f, 0.0f,
+		7.0f);
+	spotLightCount4++;
+	// -------------------------------------------------
+
 	
 	// ================================================ //	
 
@@ -468,6 +556,8 @@ int main()
 	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 
 	identidad = glm::mat4(1.0);
+	
+	glm::vec3 pos_spotlights;
 
 	// =================== ANIMACION GENERAL ================= //
 	glm::vec3 pos_obj;
@@ -509,7 +599,7 @@ int main()
 	
 	float anguloActualZeppelin = 0.0f;
 
-	// ==================== ZEPPELIN ================ //
+	// ======================================= //
 
 	
 
@@ -566,19 +656,44 @@ int main()
 
 		// ================================================================= LUCES INICIO ================================================================
 		
-		// MAIN
+		// ------------------------------------------------- MAIN
 		if (flagDiaNoche) shaderList[0].SetDirectionalLight(&mainLightDia);
 		else shaderList[0].SetDirectionalLight(&mainLightNoche);
-		
-		lowerLight = camera.getCameraPosition();
-		lowerLight.y -= 0.3f;
-		spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());
+				
+		// ------------------------------------------------- SPOTLIGHTS ( TECLADO )
+		// T -> Tren
+		// E -> Estatua
+		if (mainWindow.luzTren() && mainWindow.luzEstatua()) {
+			lowerLight = camera.getCameraPosition();
+			lowerLight.y -= 0.3f;
+			spotLights1[0].SetFlash(lowerLight, camera.getCameraDirection());
 
-		// SPOTLIGHTS
-		shaderList[0].SetSpotLights(spotLights, spotLightCount);
+			shaderList[0].SetSpotLights(spotLights1, spotLightCount1);
+		}
+		else if (mainWindow.luzTren()){
+			lowerLight = camera.getCameraPosition();
+			lowerLight.y -= 0.3f;
+			spotLights2[0].SetFlash(lowerLight, camera.getCameraDirection());
+
+			shaderList[0].SetSpotLights(spotLights2, spotLightCount2);
+		}
+		else if (mainWindow.luzEstatua()){
+			lowerLight = camera.getCameraPosition();
+			lowerLight.y -= 0.3f;
+			spotLights3[0].SetFlash(lowerLight, camera.getCameraDirection());
+
+			shaderList[0].SetSpotLights(spotLights3, spotLightCount3);
+		}
+		else{
+			lowerLight = camera.getCameraPosition();
+			lowerLight.y -= 0.3f;
+			spotLights4[0].SetFlash(lowerLight, camera.getCameraDirection());
+
+			shaderList[0].SetSpotLights(spotLights4, spotLightCount4);
+		}
 		
-		// POINTLIGHTS
-		// Ciclo Dia y Noche
+		
+		// ------------------------------------------------- POINTLIGHTS - Ciclo Dia y Noche
 		if (flagDiaNoche) shaderList[0].SetPointLights(pointLights, 0);
 		else shaderList[0].SetPointLights(pointLights, pointLightCount);
 		
@@ -616,7 +731,7 @@ int main()
 		model = glm::translate(model, glm::vec3(80.0f, -1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 		pos_obj = glm::vec3(model[3]);
-		pos_obj.y += 30.0f;
+		pos_obj.y += 37.0f;
 		pos_obj.x -= 1.0f;
 		pointLights[0].SetPos(pos_obj);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -624,10 +739,10 @@ int main()
 
 		// Lampara 2
 		model = identidad;
-		model = glm::translate(model, glm::vec3(-10.0f, -1.0f, 120.0f));
+		model = glm::translate(model, glm::vec3(-40.0f, -1.0f, 120.0f));
 		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 		pos_obj = glm::vec3(model[3]);
-		pos_obj.y += 30.0f;
+		pos_obj.y += 37.0f;
 		pos_obj.x -= 1.0f;
 		pointLights[1].SetPos(pos_obj);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -635,10 +750,10 @@ int main()
 
 		// Lampara 3
 		model = identidad;
-		model = glm::translate(model, glm::vec3(-10.0f, -1.0f, -120.0f));
+		model = glm::translate(model, glm::vec3(-40.0f, -1.0f, -120.0f));
 		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 		pos_obj = glm::vec3(model[3]);
-		pos_obj.y += 30.0f;
+		pos_obj.y += 37.0f;
 		pos_obj.x -= 1.0f;
 		pointLights[2].SetPos(pos_obj);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -648,27 +763,27 @@ int main()
 		// Cartel 1 
 		model = identidad;
 		model = glm::translate(model, glm::vec3(65.0f, -1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+		model = glm::scale(model, glm::vec3(1.7f, 1.7f, 1.7f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		letrero.RenderModel();
 
 		// Cartel 2 
 		model = identidad;
-		model = glm::translate(model, glm::vec3(-30.0f, -1.0f, -120.0f));
-		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+		model = glm::translate(model, glm::vec3(-50.0f, -1.0f, -120.0f));
+		model = glm::scale(model, glm::vec3(1.7f, 1.7f, 1.7f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		letrero.RenderModel();
 
 		// Cartel 3
 		model = identidad;
-		model = glm::translate(model, glm::vec3(-30.0f, -1.0f, 100.0f));
-		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+		model = glm::translate(model, glm::vec3(-50.0f, -1.0f, 100.0f));
+		model = glm::scale(model, glm::vec3(1.7f, 1.7f, 1.7f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		letrero.RenderModel();
 
 		// ----------------------------------------- LIBRERO -----------------------------------------
 		model = identidad;
-		model = glm::translate(model, glm::vec3(260.0, -1.0f, 100.0f));
+		model = glm::translate(model, glm::vec3(220.0, -1.0f, 100.0f));
 		model = glm::scale(model, glm::vec3(6.0f, 6.0f, 6.0f));
 		model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -677,35 +792,35 @@ int main()
 		// ----------------------------------------- ARBOL -----------------------------------------
 		// 1
 		model = identidad;
-		model = glm::translate(model, glm::vec3(120.0, -1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(120.0, -1.1f, 0.0f));
 		model = glm::scale(model, glm::vec3(30.0f, 30.0f, 30.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		arbol.RenderModel();
 
 		// 2
 		model = identidad;
-		model = glm::translate(model, glm::vec3(120.0, -1.0f, -250.0f));
+		model = glm::translate(model, glm::vec3(120.0, -1.1f, -250.0f));
 		model = glm::scale(model, glm::vec3(30.0f, 30.0f, 30.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		arbol.RenderModel();
 
 		// 3
 		model = identidad;
-		model = glm::translate(model, glm::vec3(275.0, -1.0f, -100.0f));
+		model = glm::translate(model, glm::vec3(275.0, -1.1f, -100.0f));
 		model = glm::scale(model, glm::vec3(30.0f, 30.0f, 30.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		arbol.RenderModel();
 
 		// 4
 		model = identidad;
-		model = glm::translate(model, glm::vec3(120.0, -1.0f, 250.0f));
+		model = glm::translate(model, glm::vec3(120.0, -1.1f, 250.0f));
 		model = glm::scale(model, glm::vec3(30.0f, 30.0f, 30.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		arbol.RenderModel();
 
 		// 5
 		model = identidad;
-		model = glm::translate(model, glm::vec3(275.0, -1.0f, 100.0f));
+		model = glm::translate(model, glm::vec3(275.0, -1.1f, 100.0f));
 		model = glm::scale(model, glm::vec3(30.0f, 30.0f, 30.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		arbol.RenderModel();
@@ -720,6 +835,7 @@ int main()
 		
 
 		// ----------------------------------------- ZEPPELIN -----------------------------------------
+		// INICIA ANIMACIÓN CON LA TECLA -> X
 		if (mainWindow.animacionZeppelin()) {
 			tiempoZeppelin += 0.01f * deltaTime * velocidadZeppelin;
 
@@ -733,11 +849,11 @@ int main()
 
 			giroZeppelin = atan2(dirZeppelinZ, -dirZeppelinX);
 
-			// ----------------------- Giro helice -------------------------
+			// ------------- Giro helice ---------------------
 			heliceGiro += deltaTime * 3.0f;
 			if (heliceGiro >= 360.0f) heliceGiro = 0.0f;
 
-			// ----------------------- TEXTURA FUEGO -------------------
+			// ------------- TEXTURA FUEGO -------------------
 			tiempoFuego += 0.05 * deltaTime;
 
 			// Movimiento ondulado en U y V
@@ -796,11 +912,69 @@ int main()
 		model = glm::rotate(model, heliceGiro * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		zeppelin_helice_abajo.RenderModel();
-		
-				
+						
 		// Para que no afecte a otras texturas
 		toffset = glm::vec2(0.0f, 0.0f);
 		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+
+		// ================================================================= LUCES POR TECLADO ================================================================
+		// ----------------------------------------- ESTATUA / REFLECTOR -----------------------------------------
+		model = identidad;
+		model = glm::translate(model, glm::vec3(-120.0f, -1.0f, -100.0f));
+		model = glm::scale(model, glm::vec3(10.0f, 10.0f, 10.0f));
+		// ----------------------------- pointlights luces -----------------------------
+		if (mainWindow.luzTren() && mainWindow.luzEstatua()) {
+			pos_spotlights = glm::vec3(model[3]);
+			pos_spotlights.y += 20.0f;
+			//pos_spotlights.x -= 5.0f;
+			spotLights1[2].SetColor(glm::vec3(0.0f, 1.0f, 0.0f)); // Verde
+			spotLights1[2].SetPos(pos_spotlights);
+			spotLights1[2].SetDir(glm::vec3(0.4f, -1.0f, 0.0f));
+		}
+		else if (mainWindow.luzEstatua()) {
+			pos_spotlights = glm::vec3(model[3]);
+			pos_spotlights.y += 15.0f;
+			//pos_spotlights.x -= 5.0f;
+			spotLights3[1].SetColor(glm::vec3(0.0f, 1.0f, 0.0f)); // Verde
+			spotLights3[1].SetPos(pos_spotlights);
+			spotLights3[1].SetDir(glm::vec3(0.4f, -1.0f, 0.0f));
+		}
+		//model = glm::rotate(model, heliceGiro * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		reflector.RenderModel(); 
+
+		// ejemplo objeto alumbrado
+		model = identidad;
+		model = glm::translate(model, glm::vec3(-100.0f, -1.0f, -100.0f));
+		model = glm::scale(model, glm::vec3(1.7f, 1.7f, 1.7f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		letrero.RenderModel(); // cambiar por modelo de estatua
+
+		// ----------------------------------------- TREN -----------------------------------------
+		model = identidad;
+		model = glm::translate(model, glm::vec3(-100.0f, -1.0f, 100.0f));
+		model = glm::scale(model, glm::vec3(1.7f, 1.7f, 1.7f));
+		// ----------------------------- pointlights luces -----------------------------
+		if (mainWindow.luzTren() && mainWindow.luzEstatua()) {
+			pos_spotlights = glm::vec3(model[3]);
+			pos_spotlights.y += 15.0f;
+			pos_spotlights.x -= 5.0f;
+			spotLights1[1].SetColor(glm::vec3(0.0f, 1.0f, 1.0f)); // Cyan
+			spotLights1[1].SetPos(pos_spotlights);
+			spotLights1[1].SetDir(glm::vec3(0.3f, -1.0f, 0.0f));
+		}
+		else if (mainWindow.luzTren()) {
+			pos_spotlights = glm::vec3(model[3]);
+			pos_spotlights.y += 15.0f;
+			pos_spotlights.x -= 5.0f;
+			spotLights2[1].SetColor(glm::vec3(0.0f, 1.0f, 1.0f)); // Cyan
+			spotLights2[1].SetPos(pos_spotlights);
+			spotLights2[1].SetDir(glm::vec3(0.3f, -1.0f, 0.0f));
+		}
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		letrero.RenderModel(); // cambiar por modelo de estatua
+		// ================================================================= LUCES POR TECLADO ================================================================
+
 
 
 
