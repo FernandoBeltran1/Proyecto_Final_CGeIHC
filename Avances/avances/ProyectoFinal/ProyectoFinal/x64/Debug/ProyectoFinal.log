@@ -1,0 +1,15 @@
+﻿  ProyectoFinal.cpp
+C:\Users\sakur\source\repos\practica4\ProyectoFinal\ProyectoFinal\Window.h(12,36): warning C4244: 'return': conversión de 'GLint' a 'GLfloat'; posible pérdida de datos
+  (compilando archivo de origen "ProyectoFinal.cpp")
+  
+C:\Users\sakur\source\repos\practica4\ProyectoFinal\ProyectoFinal\Window.h(13,37): warning C4244: 'return': conversión de 'GLint' a 'GLfloat'; posible pérdida de datos
+  (compilando archivo de origen "ProyectoFinal.cpp")
+  
+C:\Users\sakur\source\repos\practica4\ProyectoFinal\ProyectoFinal\ProyectoFinal.cpp(131,24): warning C4267: 'inicializando': conversión de 'size_t' a 'unsigned int'; posible pérdida de datos
+C:\Users\sakur\source\repos\practica4\ProyectoFinal\ProyectoFinal\ProyectoFinal.cpp(503,17): warning C4244: 'inicializando': conversión de 'float' a 'int'; posible pérdida de datos
+C:\Users\sakur\source\repos\practica4\ProyectoFinal\ProyectoFinal\ProyectoFinal.cpp(504,17): warning C4244: 'inicializando': conversión de 'float' a 'int'; posible pérdida de datos
+C:\Users\sakur\source\repos\practica4\ProyectoFinal\ProyectoFinal\ProyectoFinal.cpp(505,22): warning C4244: 'inicializando': conversión de 'float' a 'int'; posible pérdida de datos
+C:\Users\sakur\source\repos\practica4\ProyectoFinal\ProyectoFinal\ProyectoFinal.cpp(506,18): warning C4244: 'inicializando': conversión de 'float' a 'int'; posible pérdida de datos
+C:\Users\sakur\source\repos\practica4\ProyectoFinal\ProyectoFinal\ProyectoFinal.cpp(522,20): warning C4244: '=': conversión de 'double' a 'GLfloat'; posible pérdida de datos
+C:\Users\sakur\source\repos\practica4\ProyectoFinal\ProyectoFinal\ProyectoFinal.cpp(524,33): warning C4244: '+=': conversión de 'double' a 'GLfloat'; posible pérdida de datos
+  ProyectoFinal.vcxproj -> C:\Users\sakur\source\repos\practica4\ProyectoFinal\x64\Debug\ProyectoFinal.exe
