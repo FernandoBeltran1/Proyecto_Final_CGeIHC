@@ -947,35 +947,35 @@ int main()
 		// ================================================================= LUCES POR TECLADO ================================================================
 		// ----------------------------------------- ESTATUA / REFLECTOR -----------------------------------------
 		model = identidad;
-		model = glm::translate(model, glm::vec3(-120.0f, -1.0f, -100.0f));
-		model = glm::scale(model, glm::vec3(10.0f, 10.0f, 10.0f));
+		model = glm::translate(model, glm::vec3(-130.0f, -1.0f, -100.0f));
+		model = glm::scale(model, glm::vec3(12.0f, 12.0f, 12.0f));
 		// ----------------------------- pointlights luces -----------------------------
 		if (mainWindow.luzTren() && mainWindow.luzEstatua()) {
 			pos_spotlights = glm::vec3(model[3]);
-			pos_spotlights.y += 20.0f;
-			//pos_spotlights.x -= 5.0f;
+			pos_spotlights.y += 30.0f;
+			pos_spotlights.x += 5.0f;
 			spotLights1[2].SetColor(glm::vec3(0.0f, 1.0f, 0.0f)); // Verde
 			spotLights1[2].SetPos(pos_spotlights);
-			spotLights1[2].SetDir(glm::vec3(0.4f, -1.0f, 0.0f));
+			spotLights1[2].SetDir(glm::vec3(0.5f, -1.0f, 0.0f));
 		}
 		else if (mainWindow.luzEstatua()) {
 			pos_spotlights = glm::vec3(model[3]);
-			pos_spotlights.y += 15.0f;
-			//pos_spotlights.x -= 5.0f;
+			pos_spotlights.y += 30.0f;
+			pos_spotlights.x += 5.0f;
 			spotLights3[1].SetColor(glm::vec3(0.0f, 1.0f, 0.0f)); // Verde
 			spotLights3[1].SetPos(pos_spotlights);
-			spotLights3[1].SetDir(glm::vec3(0.4f, -1.0f, 0.0f));
+			spotLights3[1].SetDir(glm::vec3(0.5f, -1.0f, 0.0f));
 		}
-		//model = glm::rotate(model, heliceGiro * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		reflector.RenderModel(); 
 
 		// ejemplo objeto alumbrado
 		model = identidad;
 		model = glm::translate(model, glm::vec3(-100.0f, -1.0f, -100.0f));
-		model = glm::scale(model, glm::vec3(1.7f, 1.7f, 1.7f));
+		model = glm::scale(model, glm::vec3(6.0f, 6.0f, 6.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		letrero.RenderModel(); // cambiar por modelo de estatua
+		estatua.RenderModel(); 
 
 		// ----------------------------------------- TREN -----------------------------------------
 		model = identidad;
@@ -984,7 +984,7 @@ int main()
 		// ----------------------------- pointlights luces -----------------------------
 		if (mainWindow.luzTren() && mainWindow.luzEstatua()) {
 			pos_spotlights = glm::vec3(model[3]);
-			pos_spotlights.y += 15.0f;
+			pos_spotlights.y += 20.0f;
 			pos_spotlights.x -= 5.0f;
 			spotLights1[1].SetColor(glm::vec3(0.0f, 1.0f, 1.0f)); // Cyan
 			spotLights1[1].SetPos(pos_spotlights);
@@ -992,14 +992,14 @@ int main()
 		}
 		else if (mainWindow.luzTren()) {
 			pos_spotlights = glm::vec3(model[3]);
-			pos_spotlights.y += 15.0f;
+			pos_spotlights.y += 20.0f;
 			pos_spotlights.x -= 5.0f;
 			spotLights2[1].SetColor(glm::vec3(0.0f, 1.0f, 1.0f)); // Cyan
 			spotLights2[1].SetPos(pos_spotlights);
 			spotLights2[1].SetDir(glm::vec3(0.3f, -1.0f, 0.0f));
 		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		letrero.RenderModel(); // cambiar por modelo de estatua
+		letrero.RenderModel(); // cambiar por modelo de tren
 		// ================================================================= LUCES POR TECLADO ================================================================
 
 

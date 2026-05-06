@@ -121,7 +121,7 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 	}
 
 	// ------------------ Movimiento Zeppelin -----------------------
-	if (key == GLFW_KEY_X && action == GLFW_PRESS){
+	if (key == GLFW_KEY_Z && action == GLFW_PRESS){
 		theWindow->flagAnimacionZeppelin = !theWindow->flagAnimacionZeppelin;
 	}
 		
