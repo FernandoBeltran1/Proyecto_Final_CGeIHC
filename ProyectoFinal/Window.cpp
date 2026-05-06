@@ -22,6 +22,10 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	flagLuzEstatua = false;
 	flagLuzTren = false;
 
+	// ============================= Cámara ======================
+
+	camaraActual = 1;
+	vistaEstaticaActual = 0;
 
 	// ==========================================================
 	
@@ -47,7 +51,7 @@ int Window::Initialise()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 	//CREAR VENTANA
-	mainWindow = glfwCreateWindow(width, height, "Practica08: Iluminacion II", NULL, NULL);
+	mainWindow = glfwCreateWindow(width, height, "Proyecto Final", NULL, NULL);
 
 	if (!mainWindow)
 	{
@@ -143,6 +147,35 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 			//printf("se solto la tecla %d'\n", key);
 		}
 	}
+
+
+	// ------------------ Cambio de camaras -----------------------
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+		theWindow->camaraActual = 1;
+	}
+
+	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+		theWindow->camaraActual = 2;
+	}
+
+	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+		theWindow->camaraActual = 3;
+	}
+
+	if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
+		if (theWindow->camaraActual == 4) {
+			theWindow->vistaEstaticaActual++;
+
+			if (theWindow->vistaEstaticaActual > 2) {
+				theWindow->vistaEstaticaActual = 0;
+			}
+		}
+		else {
+			theWindow->camaraActual = 4;
+		}
+	}
+
+
 }
 
 void Window::ManejaMouse(GLFWwindow* window, double xPos, double yPos)

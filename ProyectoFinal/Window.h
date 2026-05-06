@@ -21,7 +21,11 @@ public:
 	bool luzTren() { return flagLuzTren; }
 	bool luzEstatua() { return flagLuzEstatua; }
 
-
+	
+	// ============================ Camara por teclado ==========================
+	int getCamaraActual() { return camaraActual; }
+	int getVistaEstaticaActual() { return vistaEstaticaActual; }
+		
 	// ============================================================================
 
 
@@ -49,8 +53,11 @@ private:
 	bool flagAnimacionZeppelin;
 	bool flagLuzTren, flagLuzEstatua;
 
+	// ============================ camara por teclado ==========================
+	int camaraActual;
+	int vistaEstaticaActual;
+	
 	// ========================================= //
-
 
 
 	bool mouseFirstMoved;

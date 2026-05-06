@@ -613,8 +613,20 @@ int main()
 
 		//Recibir eventos del usuario
 		glfwPollEvents();
-		camera.keyControl(mainWindow.getsKeys(), deltaTime);
-		camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+		
+		// ------------------ Cambio de camaras -----------------------
+		// camera.keyControl(mainWindow.getsKeys(), deltaTime);
+		// camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+		// ------------------ Cambio de camaras -----------------------
+		camera.controlarCamara(
+			mainWindow.getsKeys(),
+			deltaTime,
+			mainWindow.getXChange(),
+			mainWindow.getYChange(),
+			mainWindow.getCamaraActual(),
+			mainWindow.getVistaEstaticaActual()
+		);
+
 
 		// Clear the window
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
