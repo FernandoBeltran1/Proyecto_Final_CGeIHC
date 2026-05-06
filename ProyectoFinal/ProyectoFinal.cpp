@@ -59,11 +59,14 @@ Model castillo;
 Model arbol;
 Model librero_medieval;
 
+Model laboratorio_frank;
+
 Model zeppelin_base;
 Model zeppelin_helice_abajo;
 Model zeppelin_helice_arriba;
 
 Model reflector;
+Model estatua;
 
 
 // ================== LUCES ======================= //
@@ -357,7 +360,11 @@ int main()
 	reflector = Model();
 	reflector.LoadModel("Models/reflector.obj");
 
+	laboratorio_frank = Model();
+	laboratorio_frank.LoadModel("Models/laboratorio_frank.obj");
 
+	estatua = Model();
+	estatua.LoadModel("Models/estatua.obj");
 	// ========================================= //
 		
 	/*skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -844,6 +851,14 @@ int main()
 		model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		castillo.RenderModel();
+
+		// ----------------------------------------- LABORATORIO FRANK -----------------------------------------
+		model = identidad;
+		model = glm::translate(model, glm::vec3(200.0, -0.9f, 200.0f));
+		model = glm::scale(model, glm::vec3(14.0f, 14.0f, 14.0f));
+		model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		laboratorio_frank.RenderModel();
 		
 
 		// ----------------------------------------- ZEPPELIN -----------------------------------------

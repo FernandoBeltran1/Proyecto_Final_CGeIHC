@@ -142,9 +142,9 @@ void Camera::controlarCamara(bool* keys, GLfloat deltaTime, GLfloat xChange, GLf
 	}
 	else if (camaraActual == 3)
 	{
-		keyControlXZ(keys, deltaTime, 70.0f);
+		keyControlXZ(keys, deltaTime, 100.0f);
 		mouseControl(xChange, yChange);
-		position.y = 70.0f;
+		position.y = 100.0f;
 	}
 	else if (camaraActual == 4)
 	{
