@@ -60,6 +60,12 @@ Model arbol;
 Model librero_medieval;
 
 Model laboratorio_frank;
+Model frank;
+Model cientifico_cabeza;
+Model cientifico_torso;
+Model cientifico_brazo_der;
+Model cientifico_brazo_izq;
+Model cientifico_piernas;
 
 Model zeppelin_base;
 Model zeppelin_helice_abajo;
@@ -363,6 +369,24 @@ int main()
 	laboratorio_frank = Model();
 	laboratorio_frank.LoadModel("Models/laboratorio_frank.obj");
 
+	cientifico_torso = Model();
+	cientifico_torso.LoadModel("Models/cientifico_torso.obj");
+
+	cientifico_cabeza = Model();
+	cientifico_cabeza.LoadModel("Models/cientifico_cabezaT.obj");
+
+	cientifico_brazo_der = Model();
+	cientifico_brazo_der.LoadModel("Models/cientifico_brazo_der.obj");
+
+	cientifico_brazo_izq = Model();
+	cientifico_brazo_izq.LoadModel("Models/cientifico_brazo_izq.obj");
+
+	cientifico_piernas = Model();
+	cientifico_piernas.LoadModel("Models/cientifico_cuerpo_abajo.obj");
+
+	frank = Model();
+	frank.LoadModel("Models/franki.obj");
+
 	estatua = Model();
 	estatua.LoadModel("Models/estatua.obj");
 	// ========================================= //
@@ -606,9 +630,12 @@ int main()
 	
 	float anguloActualZeppelin = 0.0f;
 
-	// ======================================= //
-
+	// ==================== CIENTIFICO ================ //
 	
+	float brazo_rotacion = 0.0f;
+	float cientificoAnimacion = 0.0f;
+
+	// ======================================= //
 
 	////Loop mientras no se cierra la ventana
 	while (!mainWindow.getShouldClose())
@@ -846,11 +873,19 @@ int main()
 
 		// ----------------------------------------- CASTILLO -----------------------------------------
 		model = identidad;
-		model = glm::translate(model, glm::vec3(200.0, -1.0f, -200.0f));
-		model = glm::scale(model, glm::vec3(7.5f, 7.5f, 7.5f));
+		model = glm::translate(model, glm::vec3(200.0, -1.0f, -160.0f));
+		model = glm::scale(model, glm::vec3(9.5f, 9.5f, 9.5f));
 		model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		castillo.RenderModel();
+
+		// ----------------------------------------- FRANK -----------------------------------------
+		model = identidad;
+		model = glm::translate(model, glm::vec3(200.0, -0.9f, -160.0f));
+		model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
+		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		frank.RenderModel();
 
 		// ----------------------------------------- LABORATORIO FRANK -----------------------------------------
 		model = identidad;
@@ -859,7 +894,42 @@ int main()
 		model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		laboratorio_frank.RenderModel();
+
+		// ----------------------------------------- Científico -----------------------------------------
+		model = identidad;
+		model = glm::translate(model, glm::vec3(150.0, 17.0f, 200.0f));
+		model = glm::scale(model, glm::vec3(30.0f, 30.0f, 30.0f));
+		modelaux = model;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		cientifico_torso.RenderModel();
+
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.0f, 0.56f, 0.0f));
+		model = glm::rotate(model, 180 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		cientifico_cabeza.RenderModel();
 		
+		cientificoAnimacion = fmod(glfwGetTime(), 10.0f);
+		
+		if (cientificoAnimacion >= 0.0f && cientificoAnimacion <= 5.0f) brazo_rotacion += deltaTime * 0.3;
+		else brazo_rotacion -= deltaTime * 0.3;
+
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(-0.02f, 0.52f, 0.145f));
+		model = glm::rotate(model, brazo_rotacion * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		cientifico_brazo_der.RenderModel();
+
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(-0.02f, 0.48f, -0.135f));
+		model = glm::rotate(model, brazo_rotacion * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		cientifico_brazo_izq.RenderModel();
+
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.0f, 0.1f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		cientifico_piernas.RenderModel();
 
 		// ----------------------------------------- ZEPPELIN -----------------------------------------
 		// INICIA ANIMACIÓN CON LA TECLA -> X
