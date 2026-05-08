@@ -14,28 +14,27 @@ public:
 	GLfloat getXChange();
 	GLfloat getYChange();
 	
-	//Nave Banderas
-	GLfloat getPosNave() { return posNave; }
-	GLint prendeLuzNave() { return estadoNave; }
-	
-	//GLfloat getPosCoche() { return posCoche; }
-	GLfloat MovingPezX() { return posPezX; }
-	GLfloat MovingPezY() { return posPezY; }
-	GLint getDireccionPez() { return direccionPez; }
-	GLint spotLightDirPez() { return spotDirPez;  }
+	// ============================ Entradas por teclado ==========================
+	// ---- animacion zeppelin
+	bool animacionZeppelin() { return flagAnimacionZeppelin; }
 
-	GLint changeLuzCoche() { return OpcionColorCoche; }
+	bool luzTren() { return flagLuzTren; }
+	bool luzEstatua() { return flagLuzEstatua; }
+
+	
+	// ============================ Camara por teclado ==========================
+	int getCamaraActual() { return camaraActual; }
+	int getVistaEstaticaActual() { return vistaEstaticaActual; }
+		
+	// ============================================================================
+
 
 	bool getShouldClose() {
 		return  glfwWindowShouldClose(mainWindow);}
 	bool* getsKeys() { return keys; }
 	void swapBuffers() { return glfwSwapBuffers(mainWindow); }
-	//bool switch_lampara() { return valor_switch; }
 	
-	bool switch_lampara() { return luzLampara; }
-	bool switch_pez() { return luzPez; }
-
-
+	
 	
 	~Window();
 private: 
@@ -49,31 +48,16 @@ private:
 	GLfloat xChange;
 	GLfloat yChange;
 	GLfloat muevex;
-	GLfloat posCoche, posNave;
-	GLint OpcionColorCoche, estadoNave;
-	bool valor_switch;
-
-	// ========== Práctica (8) =========== //
-	GLfloat posPezX, posPezY;
-	bool moverIzquierda, moverDerecha;
-	bool pezSubiendo;
-	int direccionPez, spotDirPez;
-	// ========================================= //
-	// Ejercicio3
-	// 3. - Agregar una luz de tipo puntual  de color azul ligada 
-	// al bulbo del pez que puedan prender y apagar de forma 
-	// independiente con teclado tanto la luz de la lámpara de su 
-	// práctica 7 como esta luz(la luz de la lámpara debe de ser puntual, 
-	// si la crearon spotlight en su reporte 7 tienen que cambiarla a 
-	// luz puntual), de tal forma que se pueda ver : las 2 luces apagadas, 
-	// las 2 luces prendidas, una luz prendida y una luz apagada y viceversa.
-	bool luzLampara;
-	bool luzPez;
-
 	
+	// ============================ Entradas por teclado ==========================
+	bool flagAnimacionZeppelin;
+	bool flagLuzTren, flagLuzEstatua;
 
+	// ============================ camara por teclado ==========================
+	int camaraActual;
+	int vistaEstaticaActual;
+	
 	// ========================================= //
-
 
 
 	bool mouseFirstMoved;

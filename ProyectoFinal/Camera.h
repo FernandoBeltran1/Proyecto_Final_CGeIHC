@@ -16,6 +16,11 @@ public:
 	void keyControl(bool* keys, GLfloat deltaTime);
 	void mouseControl(GLfloat xChange, GLfloat yChange);
 
+	// ------------------ Cambio de camaras -----------------------
+	void controlarCamara(bool* keys, GLfloat deltaTime, GLfloat xChange, GLfloat yChange, int camaraActual, int vistaEstaticaActual);
+	
+	// ------------------ Cambio de camaras -----------------------
+
 	glm::vec3 getCameraPosition();
 	glm::vec3 getCameraDirection();
 	glm::mat4 calculateViewMatrix();
@@ -36,5 +41,23 @@ private:
 	GLfloat turnSpeed;
 
 	void update();
+
+	// ------------------ Cambio de camaras -----------------------
+	struct EstadoCamara {
+		glm::vec3 position;
+		GLfloat yaw;
+		GLfloat pitch;
+	};
+
+	EstadoCamara estadosCamara[5];
+
+	int camaraAnterior;
+
+	void guardarEstado(int camara);
+	void restaurarEstado(int camara);
+	void keyControlXZ(bool* keys, GLfloat deltaTime, GLfloat alturaFija);
+	void camaraEstatica(int vistaEstaticaActual);
+	// ------------------ Cambio de camaras -----------------------
+
 };
 
