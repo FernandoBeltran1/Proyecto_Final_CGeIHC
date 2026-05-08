@@ -881,8 +881,8 @@ int main()
 
 		// ----------------------------------------- FRANK -----------------------------------------
 		model = identidad;
-		model = glm::translate(model, glm::vec3(200.0, -0.9f, -160.0f));
-		model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
+		model = glm::translate(model, glm::vec3(230.0, -0.9f, 0.0f));
+		model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
 		model = glm::rotate(model, -90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		frank.RenderModel();
