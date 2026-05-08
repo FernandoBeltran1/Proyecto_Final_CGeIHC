@@ -145,7 +145,11 @@
     <None Include="shaders\skybox.vert">
       <Filter>Archivos de recursos</Filter>
     </None>
-    <None Include="shader_hojas.vert" />
-    <None Include="shader_hojas.frag" />
+    <None Include="shader_hojas.frag">
+      <Filter>Archivos de recursos</Filter>
+    </None>
+    <None Include="shader_hojas.vert">
+      <Filter>Archivos de recursos</Filter>
+    </None>
   </ItemGroup>
 </Project>
