@@ -125,7 +125,79 @@ Model cuerpo_muñeca;
 
 //-----------TERMINA DECLARACIÓN MODELOS FERNANDO-----------------//
 
+// ----------- MODELOS ANGEL -------------------
 
+// ---------------------------------------------
+// Modelos separados de las vías del tren
+Model Vias_Madera;    // Durmientes de madera  -> Textures/Madera.jpg
+Model Vias_Rieles;    // Rieles metálicos       -> Textures/Metal.jpg
+Model Vias_Uniones;   // Uniones/tornillos      -> Textures/tronco.jpg
+
+//=====================Locomotora==============
+Model Locomotora;
+GLfloat locomotora_posZ = 0.0f;   // posición actual sobre las vías
+GLfloat locomotora_velZ = 0.0f;   // velocidad actual
+const float LOCO_VEL_MAX = 15.0f;  // unidades/seg máximo
+const float LOCO_ACELERACION = 8.0f; // aceleración al presionar tecla
+const float LOCO_FRICCION = 4.0f;  // frenado al soltar
+const float LOCO_LARGO_VIA = 9.0f * 20.0f; // longitud total del circuito (20 tramos)
+
+
+//Modelo del avatar principal
+Model bangboo;
+
+//Peronaje MANATO Principal 1
+Model Manato_Cuerpo;
+Model Manato_BrazoDerecho;
+Model Manato_BrazoIzquierdo;
+Model Manato_AntebrazoDerecho;
+Model Manato_AntebrazoIzquierdo;
+Model Manato_PiernaDerecha;
+Model Manato_PiernaIzquierda;
+Model Manato_Cola;
+
+//Arboles cuadrados para el escenario
+Model Tronco_arbol;
+Model Hojas_arbol;
+
+//Modelos del segundo NPC
+Model Gummy_Body;
+Model Gummy_RightArm;
+Model Gummy_LeftArm;
+Model Gummy_Tail;
+Model Gummy_Hat;
+
+// ================== SISTEMA DE HUMO ======================= //
+struct Particula {
+	glm::vec3 pos;
+	glm::vec3 vel;
+	float vida;
+	float vidaMax;
+	float tamanio;
+	float alpha;
+};
+const int MAX_PARTICULAS = 60;
+Particula particulas[MAX_PARTICULAS];
+Texture humoTexture;
+Mesh* humoQuad;
+bool humoActivo = false;
+float humoIntensidad = 1.0f;
+
+void inicializarParticula(Particula& p, glm::vec3 posChimenea) {
+	p.pos = posChimenea;
+	p.vel = glm::vec3(
+		((rand() % 100) / 100.0f - 0.5f) * 0.3f,
+		0.8f + ((rand() % 100) / 100.0f) * 0.5f,
+		((rand() % 100) / 100.0f - 0.5f) * 0.3f
+	);
+	p.vidaMax = 1.5f + ((rand() % 100) / 100.0f);
+	p.vida = p.vidaMax;
+	p.tamanio = 0.3f + ((rand() % 100) / 100.0f) * 0.4f;
+	p.alpha = 1.0f;
+}
+// ========================Lycaon============================ //
+Model Lycaon;
+// ================== LUCES ======================= //
 
 
 // ================== LUCES ======================= //
@@ -618,6 +690,68 @@ int main()
 
 	// =================TERMINA LLAMADO A MODELOS FERNANDO======================== //
 
+	// ============================================= MODELOS ANGEL =============================================
+	// -------------------- VÍAS DEL TREN -------------------- //
+
+	Vias_Madera = Model();
+	Vias_Madera.LoadModel("Models/Madera_vias.obj");   // Durmientes -> Madera.jpg
+
+	Vias_Rieles = Model();
+	Vias_Rieles.LoadModel("Models/Rieles_vias.obj");   // Rieles     -> Metal.jpg
+
+	Vias_Uniones = Model();
+	Vias_Uniones.LoadModel("Models/Uniones_vias.obj"); // Uniones    -> tronco.jpg
+
+	// ==================Modelo de la locomotora===================== //
+	Locomotora = Model();
+	Locomotora.LoadModel("Models/Locomotora.obj");
+
+	//---------------------Avatar principal--------------------
+
+	bangboo = Model();
+	bangboo.LoadModel("Models/bangboo.obj");
+
+	//--------------MANATO PERSONAJE------------------------
+	Manato_Cuerpo = Model();
+	Manato_Cuerpo.LoadModel("Models/Cuerpo_Manato.obj");
+
+	Manato_BrazoDerecho = Model();
+	Manato_BrazoDerecho.LoadModel("Models/BrazoDerecho_Manato.obj");
+
+	Manato_BrazoIzquierdo = Model();
+	Manato_BrazoIzquierdo.LoadModel("Models/BrazoIzquierdo_Manato.obj");
+
+	Manato_AntebrazoDerecho = Model();
+	Manato_AntebrazoDerecho.LoadModel("Models/AntebrazoDerecho_Manato.obj");
+
+	Manato_AntebrazoIzquierdo = Model();
+	Manato_AntebrazoIzquierdo.LoadModel("Models/AntebrazoIzquierdo_Manato.obj");
+
+	Manato_PiernaDerecha = Model();
+	Manato_PiernaDerecha.LoadModel("Models/PiernaDerecha_Manato.obj");
+
+	Manato_PiernaIzquierda = Model();
+	Manato_PiernaIzquierda.LoadModel("Models/PiernaIzquierda_Manato.obj");
+
+	Manato_Cola = Model();
+	Manato_Cola.LoadModel("Models/Cola_Manato.obj");
+
+	Lycaon = Model();
+	Lycaon.LoadModel("Models/Lycaon.obj");
+
+	//Arbol cargado
+	Tronco_arbol.LoadModel("Models/Tronco_arbol.obj");
+	Hojas_arbol.LoadModel("Models/Hojas_arbol.obj");
+
+	//Gummygo
+	Gummy_Body.LoadModel("Models/Gummygo_Body.obj");
+	Gummy_RightArm.LoadModel("Models/Gummygo_RightArm.obj");
+	Gummy_LeftArm.LoadModel("Models/Gummygo_LeftArm.obj");
+	Gummy_Tail.LoadModel("Models/Gummygo_tail.obj");
+	Gummy_Hat.LoadModel("Models/Hat.obj");
+
+
+	// ============================================= MODELOS ANGEL =============================================
 
 	
 	// ================== SKYBOX DIA ======================= //
@@ -873,6 +1007,29 @@ int main()
 	identidad = glm::mat4(1.0);
 	
 	glm::vec3 pos_spotlights;
+
+	// ========================== VARIABLES ANGEL ==========================
+	float separacion = 30.0f;
+	GLfloat bangboo_flotacion = 0.0f;
+
+	// ?? Animación procedural de Manato
+	float manato_bodyBob = 0.0f;
+	float manato_bodySwing = 0.0f;
+	float manato_legSwing = 0.0f;
+	float manato_armSwing = 0.0f;
+
+	float mwt = 0.0f; // tiempo acumulado de caminata
+
+	// Animación NPC Gummy
+	float gummy_armAngle = 0.0f;
+	float gummy_tailAngle = 0.0f;
+	float gummy_tiempo = 0.0f;
+
+	// Variables humo
+	bool humoActivo = false;
+	float humoIntensidad = 1.0f;
+
+
 
 	//===============INICIAN VARIABLES FERNANDO===========//
 	glm::mat4 modelBase(1.0);
@@ -1570,6 +1727,358 @@ int main()
 		// ================================================================= LUCES POR TECLADO ================================================================
 
 
+		// =============================================================================== ANGEL ================================================================================================
+
+		// ========================== VÍAS DEL TREN ========================== //
+
+		float separacion = 9.0f; // ajusta según el tamaño de tu modelo
+
+		for (int i = 0; i < 20; i++)
+		{
+			model = identidad;
+			model = glm::translate(model, glm::vec3(0.0f, -1.0f, i * separacion));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+			// ===================================================================================================================
+			// --- Durmientes de madera (Madera.jpg) ---
+			Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+			Vias_Madera.RenderModel();
+
+			// --- Rieles metálicos (Metal.jpg) ---
+			Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
+			Vias_Rieles.RenderModel();
+
+		}
+
+		// ----------------------------------------- ARBOLES EN AMBOS LADOS DE LAS VIAS -----------------------------------------
+		for (int i = 0; i < 12; i++)
+		{
+			// --- Lado DERECHO ---
+			model = identidad;
+			model = glm::translate(model, glm::vec3(6.0f, -1.0f, i * 15.0f));
+			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+			Tronco_arbol.RenderModel();
+			Hojas_arbol.RenderModel();
+
+			// --- Lado IZQUIERDO ---
+			model = identidad;
+			model = glm::translate(model, glm::vec3(-6.0f, -1.0f, i * 15.0f));
+			model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+			Tronco_arbol.RenderModel();
+			Hojas_arbol.RenderModel();
+		}
+		// =======================================================================================================================
+		// ===================================================================================================================
+
+		// ----------------------------------------- BANGBOO -----------------------------------------
+		mainWindow.updateBangboo(deltaTime);
+		bangboo_flotacion += deltaTime * 0.05f;
+
+		model = identidad;
+		model = glm::translate(model, glm::vec3(
+			mainWindow.getBangbooPosX(),
+			0.5f + sin(bangboo_flotacion) * 1.2f,
+			mainWindow.getBangbooPosZ()
+		));
+		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		bangboo.RenderModel();
+		// ===========================================================================================
+		// ==================================================================== //
+
+
+		// ========================== LOCOMOTORA ========================== //
+		mainWindow.updateLoco(deltaTime);
+
+		model = identidad;
+		model = glm::translate(model, glm::vec3(2.0f, 1.4f, mainWindow.getLocoPosZ()));
+		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		Locomotora.RenderModel();
+		// ================================================================ //
+
+		// ========================== HUMO CHIMENEA ========================== //
+		glm::vec3 posChimenea = glm::vec3(2.0f, 4.5f, mainWindow.getLocoPosZ() + 1.5f);
+
+		if (mainWindow.getLocoVel() != 0.0f)
+			humoActivo = true;
+
+		if (mainWindow.getLocoPosZ() >= LOCO_LARGO_VIA - 1.0f)
+			humoIntensidad -= deltaTime * 0.3f;
+
+		// Reiniciar cuando el tren vuelve al inicio
+		if (mainWindow.getLocoPosZ() <= 0.1f && humoIntensidad <= 0.0f)
+		{
+			humoActivo = false;
+			humoIntensidad = 1.0f;
+			for (int i = 0; i < MAX_PARTICULAS; i++)
+				particulas[i].vida = 0.0f;  // matar todas las partículas vivas
+		}
+
+		humoIntensidad = glm::clamp(humoIntensidad, 0.0f, 1.0f);
+
+		if (humoActivo && humoIntensidad > 0.0f) {
+			int emitir = (int)(humoIntensidad * 2);
+			for (int i = 0; i < MAX_PARTICULAS && emitir > 0; i++) {
+				if (particulas[i].vida <= 0.0f) {
+					inicializarParticula(particulas[i], posChimenea);
+					emitir--;
+				}
+			}
+		}
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDepthMask(GL_FALSE);
+		humoTexture.UseTexture();
+
+		for (int i = 0; i < MAX_PARTICULAS; i++) {
+			if (particulas[i].vida <= 0.0f) continue;
+			particulas[i].vida -= deltaTime;
+			particulas[i].pos += particulas[i].vel * deltaTime;
+			particulas[i].vel.x *= 0.98f;
+			particulas[i].vel.z *= 0.98f;
+			float t = particulas[i].vida / particulas[i].vidaMax;
+			particulas[i].alpha = t * humoIntensidad;
+
+			glm::mat4 view = camera.calculateViewMatrix();
+			model = identidad;
+			model = glm::translate(model, particulas[i].pos);
+			model[0][0] = view[0][0]; model[0][1] = view[1][0]; model[0][2] = view[2][0];
+			model[1][0] = view[0][1]; model[1][1] = view[1][1]; model[1][2] = view[2][1];
+			model[2][0] = view[0][2]; model[2][1] = view[1][2]; model[2][2] = view[2][2];
+			float s = particulas[i].tamanio * (2.0f - t);
+			model = glm::scale(model, glm::vec3(s, s, s));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glm::vec3 colorHumo = glm::vec3(particulas[i].alpha);
+			glUniform3fv(uniformColor, 1, glm::value_ptr(colorHumo));
+			humoQuad->RenderMesh();
+		}
+
+		glDepthMask(GL_TRUE);
+		glDisable(GL_BLEND);
+		// =================================================================== //
+
+		// ----------------------------------------- MANATO -----------------------------------------
+		mainWindow.updateManato(deltaTime);
+		mwt = mainWindow.getManatoWalkTime();
+
+		if (mainWindow.getManatoMoving())
+		{
+			manato_bodyBob = sin(mwt * 2.0f) * 0.06f;
+			manato_bodySwing = sin(mwt * 2.0f) * 2.5f;
+			manato_legSwing = sin(mwt * 2.0f) * 25.0f;
+			manato_armSwing = -sin(mwt * 2.0f) * 20.0f;
+		}
+		else
+		{
+			manato_bodyBob *= 0.85f;
+			manato_bodySwing *= 0.85f;
+			manato_legSwing *= 0.85f;
+			manato_armSwing *= 0.85f;
+		}
+
+		// Posición base de Manato
+		glm::vec3 manato_pos = glm::vec3(
+			mainWindow.getManatoX(),
+			-1.0f + manato_bodyBob,
+			mainWindow.getManatoZ()
+		);
+		float manato_ang = mainWindow.getManatoAngle();
+
+		// --- CUERPO ---
+		model = identidad;
+		model = glm::translate(model, manato_pos);
+		model = glm::rotate(model, manato_ang * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, manato_bodySwing * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		Manato_Cuerpo.RenderModel();
+
+		// --- BRAZO DERECHO ---
+		model = identidad;
+		model = glm::translate(model, manato_pos);
+		model = glm::rotate(model, manato_ang * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+		model = glm::translate(model, glm::vec3(-0.238f, 1.494f, 0.0f));
+		model = glm::rotate(model, manato_armSwing * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.238f, -1.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		Manato_BrazoDerecho.RenderModel();
+
+		// --- BRAZO IZQUIERDO ---
+		model = identidad;
+		model = glm::translate(model, manato_pos);
+		model = glm::rotate(model, manato_ang * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+		model = glm::translate(model, glm::vec3(0.240f, 1.493f, 0.0f));
+		model = glm::rotate(model, -manato_armSwing * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(-0.240f, -1.493f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		Manato_BrazoIzquierdo.RenderModel();
+
+		// --- ANTEBRAZO DERECHO ---
+		model = identidad;
+		model = glm::translate(model, manato_pos);
+		model = glm::rotate(model, manato_ang * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+		model = glm::translate(model, glm::vec3(-0.376f, 1.315f, 0.0f));
+		model = glm::rotate(model, manato_armSwing * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.376f, -1.315f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		Manato_AntebrazoDerecho.RenderModel();
+
+		// --- ANTEBRAZO IZQUIERDO ---
+		model = identidad;
+		model = glm::translate(model, manato_pos);
+		model = glm::rotate(model, manato_ang * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+		model = glm::translate(model, glm::vec3(0.407f, 1.296f, 0.0f));
+		model = glm::rotate(model, -manato_armSwing * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(-0.407f, -1.296f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		Manato_AntebrazoIzquierdo.RenderModel();
+
+		// --- PIERNA DERECHA ---
+		model = identidad;
+		model = glm::translate(model, manato_pos);
+		model = glm::rotate(model, manato_ang * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+		model = glm::translate(model, glm::vec3(-0.143f, 0.975f, 0.0f));
+		model = glm::rotate(model, manato_legSwing * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.143f, -0.975f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		Manato_PiernaDerecha.RenderModel();
+
+		// --- PIERNA IZQUIERDA ---
+		model = identidad;
+		model = glm::translate(model, manato_pos);
+		model = glm::rotate(model, manato_ang * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+		model = glm::translate(model, glm::vec3(0.123f, 0.968f, 0.0f));
+		model = glm::rotate(model, -manato_legSwing * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(-0.123f, -0.968f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		Manato_PiernaIzquierda.RenderModel();
+
+		// --- COLA ---
+		model = identidad;
+		model = glm::translate(model, manato_pos);
+		model = glm::rotate(model, manato_ang * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+		model = glm::translate(model, glm::vec3(-0.007f, 1.139f, 0.0f));
+		model = glm::rotate(model, manato_bodySwing * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.007f, -1.139f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		Manato_Cola.RenderModel();
+		// ===========================================================================================
+		// ===========================================================================================
+
+		// ----------------------------------------- NPC GUMMY -----------------------------------------
+		gummy_tiempo += deltaTime * 0.1f;
+
+		// Brazo derecho: saluda inclinándose con el sombrero (oscila entre -30° y -90°)
+		gummy_armAngle = 45.0f + sin(gummy_tiempo * 2.5f) * 45.0f;
+
+		// Cola: oscila suavemente izquierda y derecha (±15°)
+		gummy_tailAngle = sin(gummy_tiempo * 1.8f) * 15.0f;
+
+		glm::vec3 gummyPos = glm::vec3(8.0f, -1.0f, 20.0f); // ajusta posición en la escena
+
+		// --- Cuerpo ---
+		model = identidad;
+		model = glm::translate(model, gummyPos);
+		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		Gummy_Body.RenderModel();
+
+		// --- Brazo izquierdo (animado, saluda arriba y abajo) ---
+		model = identidad;
+		model = glm::translate(model, gummyPos);
+		model = glm::translate(model, glm::vec3(0.422f, 2.179f, 0.0f));      // pivote hombro izquierdo
+		model = glm::rotate(model, gummy_armAngle * toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); // rotar en X
+		model = glm::translate(model, glm::vec3(-0.422f, -2.179f, 0.0f));    // regreso al origen
+		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		Gummy_LeftArm.RenderModel();
+
+		// --- Brazo derecho (animado, saluda arriba y abajo) ---
+		model = identidad;
+		model = glm::translate(model, gummyPos);
+		model = glm::translate(model, glm::vec3(-0.349f, 2.152f, 0.0f));    // pivot en hombro izquierdo
+		model = glm::rotate(model, gummy_armAngle * toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); // rota en X
+		model = glm::translate(model, glm::vec3(0.349f, -2.152f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		Gummy_RightArm.RenderModel();
+
+		// --- Sombrero (estático en la cabeza) ---
+		model = identidad;
+		model = glm::translate(model, gummyPos);
+		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		Gummy_Hat.RenderModel();
+
+		// --- Cola (oscila en Y) ---
+		model = identidad;
+		model = glm::translate(model, gummyPos);
+		model = glm::rotate(model, gummy_tailAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		Gummy_Tail.RenderModel();
+		// ===========================================================================================
+
+		//Lycaon
+		//Lycaon
+		model = identidad;
+		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 10.0f));  // frente a la cámara al inicio
+		// Sin rotación extra — el modelo ya está orientado correctamente en Blender
+		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		Lycaon.RenderModel();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		// ======================================================================================================================================================================================
+
 
 
 		//========================OBJETOS FERNANDO=========================================//
@@ -1597,8 +2106,26 @@ int main()
 		llanta.RenderModel();
 
 		//========================TERMINAN OBJETOS FERNANDO=========================================//
+		//
+		model = identidad;
+		model = glm::translate(model, glm::vec3(150.0, -1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		castillo.RenderModel();
 
-				// ============INICIAN RENDERIZADOS FERNANDO================================ //
+
+		//blending: transparencia o traslucidez
+		glDisable(GL_CULL_FACE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(10.0f, 0.6f, 9.0f));
+		model = glm::scale(model, glm::vec3(4.0f, 1.5f, 1.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		
+
+
+
+		// ============INICIAN RENDERIZADOS FERNANDO================================ //
 		//agua
 
 		aguaTexture.UseTexture();

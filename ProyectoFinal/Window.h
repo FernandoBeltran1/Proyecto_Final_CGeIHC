@@ -27,6 +27,30 @@ public:
 	int getVistaEstaticaActual() { return vistaEstaticaActual; }
 		
 	// ============================================================================
+	// Locomotora
+	GLfloat getLocoPosZ() { return locoPos; }
+	GLfloat getLocoVel() { return locoVel; }
+	void    updateLoco(GLfloat deltaTime);
+
+	// Bangboo
+	GLfloat getBangbooPosX() { return bangbooPosX; }
+	GLfloat getBangbooPosZ() { return bangbooPosZ; }
+	void updateBangboo(GLfloat deltaTime);
+
+
+
+	// Manato
+	GLfloat getManatoX() { return manatoPosX; }
+	GLfloat getManatoZ() { return manatoPosZ; }
+	GLfloat getManatoAngle() { return manatoAngle; }
+	GLint   getManatoDir() { return manatoDir; }
+	bool    getManatoMoving() { return manatoMoving; }
+	GLfloat getManatoWalkTime() { return manatoWalkTime; }
+	void    updateManato(GLfloat deltaTime);
+
+
+
+
 
 
 	bool getShouldClose() {
@@ -58,6 +82,29 @@ private:
 	int vistaEstaticaActual;
 	
 	// ========================================= //
+	GLfloat locoVel;
+	GLfloat locoPos;
+	bool locoAdelante;
+	bool locoAtras;
+	const float LOCO_VEL_MAX = 2.0f;
+	const float LOCO_ACELERACION = 0.5f;
+	const float LOCO_FRICCION = 0.5f;
+	const float LOCO_LARGO_VIA = 180.0f;
+	bool valor_switch;
+	// ========== Bangboo ========== //
+	GLfloat bangbooPosX;
+	GLfloat bangbooPosZ;
+	const float BANGBOO_VEL = 0.8f;
+
+	// Manato
+	GLfloat manatoPosX;
+	GLfloat manatoPosZ;
+	GLfloat manatoAngle;   // ángulo de rotación en Y (grados)
+	GLint   manatoDir;     // 1=adelante, -1=atrás, 2=izq, -2=der
+	bool    manatoMoving;
+	GLfloat manatoWalkTime; // acumula tiempo para ciclo de caminata
+	const float MANATO_VEL = 0.5f;
+
 
 
 	bool mouseFirstMoved;

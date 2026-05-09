@@ -15,6 +15,29 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	height = windowHeight;
 	muevex = 2.0f;
 
+	// Posicion y velocidad locomotora
+	locoPos = 0.0f;
+	locoVel = 0.0f;
+	locoAdelante = false;
+	locoAtras = false;
+
+	// ========== Bangboo ========== //
+	bangbooPosX = -2.0f;  // posición inicial igual a la que tenías en ProyectoFinal.cpp
+	bangbooPosZ = 5.0f;
+	// ============================= //
+	// ===================================== //
+
+	// Manato
+	manatoPosX = 0.0f;
+	manatoPosZ = 15.0f;
+	manatoAngle = 0.0f;
+	manatoDir = 1;
+	manatoMoving = false;
+	manatoWalkTime = 0.0f;
+
+	
+
+
 	// ============================= FLAGS ======================
 	flagAnimacionZeppelin = false;
 
@@ -119,6 +142,75 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 	{
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
+
+	// ------------------ Locomotora -----------------------
+	if (key == GLFW_KEY_Y)
+	{
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+			theWindow->locoAdelante = true;
+		else if (action == GLFW_RELEASE)
+			theWindow->locoAdelante = false;
+	}
+	if (key == GLFW_KEY_G)
+	{
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+			theWindow->locoAtras = true;
+		else if (action == GLFW_RELEASE)
+			theWindow->locoAtras = false;
+	}
+	// ------------------ Locomotora FIN -------------------
+
+		// ------------------ Movimiento MANATO -----------------------
+// M = adelante, N = atrás, B = izquierda, H = derecha
+	if (key == GLFW_KEY_M)
+	{
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+		{
+			theWindow->manatoMoving = true;
+			theWindow->manatoDir = 1;
+			theWindow->manatoAngle = 0.0f;
+		}
+		else if (action == GLFW_RELEASE)
+			theWindow->manatoMoving = false;
+	}
+	if (key == GLFW_KEY_N)
+	{
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+		{
+			theWindow->manatoMoving = true;
+			theWindow->manatoDir = -1;
+			theWindow->manatoAngle = 180.0f;
+		}
+		else if (action == GLFW_RELEASE)
+			theWindow->manatoMoving = false;
+	}
+	if (key == GLFW_KEY_B)
+	{
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+		{
+			theWindow->manatoMoving = true;
+			theWindow->manatoDir = 2;
+			theWindow->manatoAngle = 270.0f;
+		}
+		else if (action == GLFW_RELEASE)
+			theWindow->manatoMoving = false;
+	}
+	if (key == GLFW_KEY_H)
+	{
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+		{
+			theWindow->manatoMoving = true;
+			theWindow->manatoDir = -2;
+			theWindow->manatoAngle = 90.0f;
+		}
+		else if (action == GLFW_RELEASE)
+			theWindow->manatoMoving = false;
+	}
+	// ------------------ Movimiento MANATO FIN -----------------------
+
+
+
+
 
 	// ------------------ Movimiento Zeppelin -----------------------
 	if (key == GLFW_KEY_Z && action == GLFW_PRESS){
