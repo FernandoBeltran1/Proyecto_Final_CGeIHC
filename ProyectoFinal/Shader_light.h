@@ -33,6 +33,10 @@ public:
 	GLuint getColorLocation();
 	GLuint getOffsetLocation();
 
+	//shaderr agregado por fernando
+	GLuint GetTimeLocation() 
+	{ return glGetUniformLocation(shaderID, "u_time"); }
+
 	void SetDirectionalLight(DirectionalLight * dLight);
 	void SetPointLights(PointLight * pLight, unsigned int lightCount);
 	void SetSpotLights(SpotLight * sLight, unsigned int lightCount);

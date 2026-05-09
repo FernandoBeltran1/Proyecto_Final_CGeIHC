@@ -85,7 +85,7 @@ Model zeppelin_helice_abajo;
 Model zeppelin_helice_arriba;
 
 Model reflector;
-Model estatua;
+Model estatua_dios_polo;
 // ================== MODELOS QUETZALLI ======================= //
 
 //-----------INICIA DECLARACIÓN MODELOS FERNANDO-----------------//
@@ -161,6 +161,10 @@ Material Material_opaco;
 //Sphere cabeza = Sphere(0.5, 20, 20);
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
+
+// Quetza
+GLfloat deltaTime1 = 0.0f;
+GLfloat lastTime1 = 0.0f;
 static double limitFPS = 1.0 / 60.0;
 
 
@@ -517,8 +521,8 @@ int main()
 	frank = Model();
 	frank.LoadModel("Models/franki.obj");
 
-	estatua = Model();
-	estatua.LoadModel("Models/estatua.obj");
+	estatua_dios_polo = Model();
+	estatua_dios_polo.LoadModel("Models/estatua.obj");
 	// ========================================= //
 
 	// =================INICIA LLAMADO A MODELOS FERNANDO======================== //
@@ -663,23 +667,14 @@ int main()
 	unsigned int pointLightCount = 0;
 	//Declaración de primer luz puntual
 	// ---------------------------------------- Lampara blanca
+	/// ----------------- Quetza ----------------
 	pointLights[0] = PointLight(0.992f, 0.925f, 0.686f,  //Lampara color blanco
 		0.0f, 10.0f,
 		0.0f, 0.0f, 0.0f,
 		0.3f, 0.025f, 0.003f);
 	pointLightCount++;
 
-	pointLights[1] = PointLight(0.992f, 0.925f, 0.686f,  //Lampara color blanco
-		0.0f, 10.0f,
-		0.0f, 0.0f, 0.0f,
-		0.3f, 0.025f, 0.003f);
-	pointLightCount++;
-
-	pointLights[2] = PointLight(0.992f, 0.925f, 0.686f,  //Lampara color blanco
-		0.0f, 10.0f,
-		0.0f, 0.0f, 0.0f,
-		0.3f, 0.025f, 0.003f);
-	pointLightCount++;
+	/// ----------------- Quetza ----------------
 
 	//pointLights[3] = PointLight(1.0f, 0.698f, 0.0f,  //Lampara china
 	//	0.0f, 5.0f,
@@ -740,6 +735,21 @@ int main()
 	pointLightCount++;
 
 	// ===================TERMINAN POINTLIGHTS FERNANDO========================== //
+
+
+	/// ----------------- Quetza ----------------
+	pointLights[48] = PointLight(0.992f, 0.925f, 0.686f,  //Lampara color blanco
+		0.0f, 10.0f,
+		0.0f, 0.0f, 0.0f,
+		0.3f, 0.025f, 0.003f);
+	pointLightCount++;
+
+	pointLights[49] = PointLight(0.992f, 0.925f, 0.686f,  //Lampara color blanco
+		0.0f, 10.0f,
+		0.0f, 0.0f, 0.0f,
+		0.3f, 0.025f, 0.003f);
+	pointLightCount++;
+	/// ----------------- Quetza ----------------
 
 
 	// ================================================== SPOTLIGHTS ===================================== //
@@ -1033,14 +1043,17 @@ int main()
 	while (!mainWindow.getShouldClose())
 	{
 		now = glfwGetTime();
-		deltaTime = now - lastTime;
-		deltaTime += (now - lastTime) / limitFPS;
-		lastTime = now;
 
+		// ---- Quetza
+		deltaTime1 = now - lastTime;
+		deltaTime1 += (now - lastTime) / limitFPS;
+		lastTime1 = now;
+
+		// ------------- MODIFICACIONES FERNANDO
 		GLfloat rawDelta = now - lastTime;
 		deltaTime = rawDelta + rawDelta / limitFPS;
 		lastTime = now;
-
+		// ------------- MODIFICACIONES FERNANDO
 
 		//====================INICIA IMPLEMENTACION ANIMACIONES FERNANDO=======//
 //para el tp
@@ -1126,7 +1139,7 @@ int main()
 		// ------------------ Cambio de camaras -----------------------
 		camera.controlarCamara(
 			mainWindow.getsKeys(),
-			deltaTime,
+			deltaTime1,
 			mainWindow.getXChange(),
 			mainWindow.getYChange(),
 			mainWindow.getCamaraActual(),
@@ -1274,7 +1287,7 @@ int main()
 		pos_obj = glm::vec3(model[3]);
 		pos_obj.y += 37.0f;
 		pos_obj.x -= 1.0f;
-		pointLights[1].SetPos(pos_obj);
+		pointLights[48].SetPos(pos_obj);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		lampara.RenderModel();
 
@@ -1285,7 +1298,7 @@ int main()
 		pos_obj = glm::vec3(model[3]);
 		pos_obj.y += 37.0f;
 		pos_obj.x -= 1.0f;
-		pointLights[2].SetPos(pos_obj);
+		pointLights[49].SetPos(pos_obj);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		lampara.RenderModel();
 
@@ -1395,8 +1408,8 @@ int main()
 		
 		cientificoAnimacion = fmod(glfwGetTime(), 10.0f);
 		
-		if (cientificoAnimacion >= 0.0f && cientificoAnimacion <= 5.0f) brazo_rotacion += deltaTime * 0.3;
-		else brazo_rotacion -= deltaTime * 0.3;
+		if (cientificoAnimacion >= 0.0f && cientificoAnimacion <= 5.0f) brazo_rotacion += deltaTime1 * 0.3;
+		else brazo_rotacion -= deltaTime1 * 0.3;
 
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(-0.02f, 0.52f, 0.145f));
@@ -1418,7 +1431,7 @@ int main()
 		// ----------------------------------------- ZEPPELIN -----------------------------------------
 		// INICIA ANIMACIÓN CON LA TECLA -> X
 		if (mainWindow.animacionZeppelin()) {
-			tiempoZeppelin += 0.01f * deltaTime * velocidadZeppelin;
+			tiempoZeppelin += 0.01f * deltaTime1 * velocidadZeppelin;
 
 			anguloActualZeppelin = anguloInicioZeppelin + tiempoZeppelin;
 
@@ -1431,11 +1444,11 @@ int main()
 			giroZeppelin = atan2(dirZeppelinZ, -dirZeppelinX);
 
 			// ------------- Giro helice ---------------------
-			heliceGiro += deltaTime * 3.0f;
+			heliceGiro += deltaTime1 * 3.0f;
 			if (heliceGiro >= 360.0f) heliceGiro = 0.0f;
 
 			// ------------- TEXTURA FUEGO -------------------
-			tiempoFuego += 0.05 * deltaTime;
+			tiempoFuego += 0.05 * deltaTime1;
 
 			// Movimiento ondulado en U y V
 			toffsetfuegou = sin(tiempoFuego * 3.0f) * 0.04f;
@@ -1529,7 +1542,7 @@ int main()
 		model = glm::translate(model, glm::vec3(-100.0f, -1.0f, -100.0f));
 		model = glm::scale(model, glm::vec3(6.0f, 6.0f, 6.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		estatua.RenderModel(); 
+		estatua_dios_polo.RenderModel();
 
 		// ----------------------------------------- TREN -----------------------------------------
 		model = identidad;
@@ -1660,7 +1673,7 @@ int main()
 			pointLights[i + 1].SetPos(lightWorldPos);
 		}
 
-		shaderList[0].SetPointLights(pointLights, pointLightCount);
+		//shaderList[0].SetPointLights(pointLights, pointLightCount);
 
 		glDisable(GL_CULL_FACE);
 		//-------------------------------LAMP3-----------------------------------//
@@ -1760,7 +1773,8 @@ int main()
 
 		tpWorldPos = glm::vec3(model[3]);
 		pointLights[47].SetPos(tpWorldPos + glm::vec3(0.0f, 1.5f, 0.0f));
-		shaderList[0].SetPointLights(pointLights, pointLightCount);
+		
+		//shaderList[0].SetPointLights(pointLights, pointLightCount);
 
 		//--------------------------------ESTATUA ZORRO-----------------------------//
 
@@ -1943,9 +1957,43 @@ int main()
 			camera.getCameraPosition().y,
 			camera.getCameraPosition().z);
 
-		shaderHojas.SetDirectionalLight(&mainLight);
-		shaderHojas.SetPointLights(pointLights, pointLightCount);
-		shaderHojas.SetSpotLights(spotLights, spotLightCount);
+		if (flagDiaNoche) shaderHojas.SetDirectionalLight(&mainLightDia);
+		else shaderHojas.SetDirectionalLight(&mainLightNoche);
+		//shaderHojas.SetDirectionalLight(&mainLight);
+		
+		//shaderHojas.SetPointLights(pointLights, pointLightCount);
+		if (flagDiaNoche) shaderHojas.SetPointLights(pointLights, 0);
+		else shaderHojas.SetPointLights(pointLights, pointLightCount);
+
+		//shaderHojas.SetSpotLights(spotLights, spotLightCount);
+		if (mainWindow.luzTren() && mainWindow.luzEstatua()) {
+			lowerLight = camera.getCameraPosition();
+			lowerLight.y -= 0.3f;
+			spotLights1[0].SetFlash(lowerLight, camera.getCameraDirection());
+
+			shaderHojas.SetSpotLights(spotLights1, spotLightCount1);
+		}
+		else if (mainWindow.luzTren()) {
+			lowerLight = camera.getCameraPosition();
+			lowerLight.y -= 0.3f;
+			spotLights2[0].SetFlash(lowerLight, camera.getCameraDirection());
+
+			shaderHojas.SetSpotLights(spotLights2, spotLightCount2);
+		}
+		else if (mainWindow.luzEstatua()) {
+			lowerLight = camera.getCameraPosition();
+			lowerLight.y -= 0.3f;
+			spotLights3[0].SetFlash(lowerLight, camera.getCameraDirection());
+
+			shaderHojas.SetSpotLights(spotLights3, spotLightCount3);
+		}
+		else {
+			lowerLight = camera.getCameraPosition();
+			lowerLight.y -= 0.3f;
+			spotLights4[0].SetFlash(lowerLight, camera.getCameraDirection());
+
+			shaderHojas.SetSpotLights(spotLights4, spotLightCount4);
+		}
 
 		GLuint uniformTime = shaderHojas.GetTimeLocation();
 		glUniform1f(uniformTime, (GLfloat)glfwGetTime());
