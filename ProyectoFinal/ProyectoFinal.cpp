@@ -1,5 +1,5 @@
-/*
-Pr·ctica 8: IluminaciÛn 2
+Ôªø/*
+Pr√°ctica 8: Iluminaci√≥n 2
 */
 //para cargar imagen
 #define STB_IMAGE_IMPLEMENTATION
@@ -28,7 +28,7 @@ Pr·ctica 8: IluminaciÛn 2
 #include"Model.h"
 #include "Skybox.h"
 
-//para iluminaciÛn
+//para iluminaci√≥n
 #include "CommonValues.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
@@ -88,7 +88,7 @@ Model reflector;
 Model estatua_dios_polo;
 // ================== MODELOS QUETZALLI ======================= //
 
-//-----------INICIA DECLARACI”N MODELOS FERNANDO-----------------//
+//-----------INICIA DECLARACI√ìN MODELOS FERNANDO-----------------//
 Model santuario_narukami;
 Model lamp1;
 Model lamp2;
@@ -120,25 +120,25 @@ Model tibia_der;
 Model pie_izq;
 Model pie_der;
 
-Model muÒeca;
-Model cuerpo_muÒeca;
+Model mu√±eca;
+Model cuerpo_mu√±eca;
 
-//-----------TERMINA DECLARACI”N MODELOS FERNANDO-----------------//
+//-----------TERMINA DECLARACI√ìN MODELOS FERNANDO-----------------//
 
 // ----------- MODELOS ANGEL -------------------
 
 // ---------------------------------------------
-// Modelos separados de las vÌas del tren
+// Modelos separados de las v√≠as del tren
 Model Vias_Madera;    // Durmientes de madera  -> Textures/Madera.jpg
-Model Vias_Rieles;    // Rieles met·licos       -> Textures/Metal.jpg
+Model Vias_Rieles;    // Rieles met√°licos       -> Textures/Metal.jpg
 Model Vias_Uniones;   // Uniones/tornillos      -> Textures/tronco.jpg
 
 //=====================Locomotora==============
 Model Locomotora;
-GLfloat locomotora_posZ = 0.0f;   // posiciÛn actual sobre las vÌas
+GLfloat locomotora_posZ = 0.0f;   // posici√≥n actual sobre las v√≠as
 GLfloat locomotora_velZ = 0.0f;   // velocidad actual
-const float LOCO_VEL_MAX = 15.0f;  // unidades/seg m·ximo
-const float LOCO_ACELERACION = 8.0f; // aceleraciÛn al presionar tecla
+const float LOCO_VEL_MAX = 15.0f;  // unidades/seg m√°ximo
+const float LOCO_ACELERACION = 8.0f; // aceleraci√≥n al presionar tecla
 const float LOCO_FRICCION = 4.0f;  // frenado al soltar
 const float LOCO_LARGO_VIA = 9.0f * 20.0f; // longitud total del circuito (20 tramos)
 
@@ -248,7 +248,7 @@ static const char* vShader = "shaders/shader_light.vert";
 static const char* fShader = "shaders/shader_light.frag";
 
 
-//funciÛn de calculo de normales por promedio de vÈrtices 
+//funci√≥n de calculo de normales por promedio de v√©rtices 
 void calcAverageNormals(unsigned int* indices, unsigned int indiceCount, GLfloat* vertices, unsigned int verticeCount,
 	unsigned int vLength, unsigned int normalOffset)
 {
@@ -682,16 +682,16 @@ int main()
 	pie_der = Model();
 	pie_der.LoadModel("Models/pie_der_yae.obj");
 
-	muÒeca = Model();
-	muÒeca.LoadModel("Models/mascara_kitsune.obj");
+	mu√±eca = Model();
+	mu√±eca.LoadModel("Models/mascara_kitsune.obj");
 
-	cuerpo_muÒeca = Model();
-	cuerpo_muÒeca.LoadModel("Models/muneca_cuerpo.obj");
+	cuerpo_mu√±eca = Model();
+	cuerpo_mu√±eca.LoadModel("Models/muneca_cuerpo.obj");
 
 	// =================TERMINA LLAMADO A MODELOS FERNANDO======================== //
 
 	// ============================================= MODELOS ANGEL =============================================
-	// -------------------- VÕAS DEL TREN -------------------- //
+	// -------------------- V√çAS DEL TREN -------------------- //
 
 	Vias_Madera = Model();
 	Vias_Madera.LoadModel("Models/Madera_vias.obj");   // Durmientes -> Madera.jpg
@@ -799,7 +799,7 @@ int main()
 	// ============== POINTLIGHTS ==================== //
 	//contador de luces puntuales
 	unsigned int pointLightCount = 0;
-	//DeclaraciÛn de primer luz puntual
+	//Declaraci√≥n de primer luz puntual
 	// ---------------------------------------- Lampara blanca
 	/// ----------------- Quetza ----------------
 	pointLights[0] = PointLight(0.992f, 0.925f, 0.686f,  //Lampara color blanco
@@ -818,7 +818,7 @@ int main()
 
 		// ===============INICIA POINTLIGHTS FERNANDO========================== //
 
-	// L·mparas del santuario 
+	// L√°mparas del santuario 
 	for (int i = 1; i <= 28; i++)
 	{
 		pointLights[i] = PointLight(1.0f, 0.85f, 0.6f,
@@ -828,7 +828,7 @@ int main()
 		pointLightCount++;
 	}
 
-	// L·mparas lamp3
+	// L√°mparas lamp3
 	pointLights[29] = PointLight(1.0f, 0.85f, 0.6f,
 		0.0f, 1.5f,
 		0.0f, 0.0f, 0.0f,
@@ -851,7 +851,7 @@ int main()
 		pointLightCount++;
 	}
 
-	// L·mparas lamp1 
+	// L√°mparas lamp1 
 	for (int i = 35; i <= 46; i++)
 	{
 		pointLights[i] = PointLight(1.0f, 0.85f, 0.6f,
@@ -895,7 +895,7 @@ int main()
 	unsigned int spotLightCount4 = 0;
 
 	// --------------------- Arreglo 1 -----------------
-	//linterna pegada a la c·mara siempre VA
+	//linterna pegada a la c√°mara siempre VA
 	spotLights1[0] = SpotLight(1.0f, 1.0f, 1.0f,
 		0.0f, 2.0f,
 		0.0f, 0.0f, 0.0f,  // Pos
@@ -924,7 +924,7 @@ int main()
 	// -------------------------------------------------
 
 	// --------------------- Arreglo 2 -----------------
-	//linterna pegada a la c·mara siempre VA
+	//linterna pegada a la c√°mara siempre VA
 	spotLights2[0] = SpotLight(1.0f, 1.0f, 1.0f,
 		0.0f, 2.0f,
 		0.0f, 0.0f, 0.0f,  // Pos
@@ -945,7 +945,7 @@ int main()
 	// -------------------------------------------------
 
 	// --------------------- Arreglo 3 -----------------
-	//linterna pegada a la c·mara siempre VA
+	//linterna pegada a la c√°mara siempre VA
 	spotLights3[0] = SpotLight(1.0f, 1.0f, 1.0f,
 		0.0f, 2.0f,
 		0.0f, 0.0f, 0.0f,  // Pos
@@ -965,7 +965,7 @@ int main()
 	// -------------------------------------------------
 
 	// --------------------- Arreglo 4 -----------------
-	//linterna pegada a la c·mara siempre VA
+	//linterna pegada a la c√°mara siempre VA
 	spotLights4[0] = SpotLight(1.0f, 1.0f, 1.0f,
 		0.0f, 2.0f,
 		0.0f, 0.0f, 0.0f,  // Pos
@@ -984,8 +984,8 @@ int main()
 	GLuint uniformColor = 0;
 	glm::mat4 projection = glm::perspective(45.0f, (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 1000.0f);
 	
-	// luz ligada a la c·mara de tipo flash
-		//sirve para que en tiempo de ejecuciÛn (dentro del while) se cambien propiedades de la luz
+	// luz ligada a la c√°mara de tipo flash
+		//sirve para que en tiempo de ejecuci√≥n (dentro del while) se cambien propiedades de la luz
 	
 	
 	
@@ -1012,7 +1012,7 @@ int main()
 	float separacion = 30.0f;
 	GLfloat bangboo_flotacion = 0.0f;
 
-	// ?? AnimaciÛn procedural de Manato
+	// ‚îÄ‚îÄ Animaci√≥n procedural de Manato
 	float manato_bodyBob = 0.0f;
 	float manato_bodySwing = 0.0f;
 	float manato_legSwing = 0.0f;
@@ -1020,7 +1020,7 @@ int main()
 
 	float mwt = 0.0f; // tiempo acumulado de caminata
 
-	// AnimaciÛn NPC Gummy
+	// Animaci√≥n NPC Gummy
 	float gummy_armAngle = 0.0f;
 	float gummy_tailAngle = 0.0f;
 	float gummy_tiempo = 0.0f;
@@ -1174,14 +1174,14 @@ int main()
 	float centroZeppelinY = 50.0f;
 	float centroZeppelinZ = 0.0f;
 
-	// ¡ngulo inicial (elige dÛnde quieres que empiece)
+	// √Ångulo inicial (elige d√≥nde quieres que empiece)
 	float anguloInicioZeppelin = 90.0f * toRadians;
 
-	// PosiciÛn inicial 
+	// Posici√≥n inicial 
 	float posZeppelinX = centroZeppelinX + radioZeppelinX * cos(anguloInicioZeppelin);
 	float posZeppelinZ = centroZeppelinZ + radioZeppelinZ * sin(anguloInicioZeppelin);
 
-	// DirecciÛn inicial 
+	// Direcci√≥n inicial 
 	float dirZeppelinX = -radioZeppelinX * sin(anguloInicioZeppelin);
 	float dirZeppelinZ = radioZeppelinZ * cos(anguloInicioZeppelin);
 
@@ -1218,7 +1218,7 @@ int main()
 		if (tp_rotY >= 360.0f) tp_rotY -= 360.0f;
 		tp_bobTime += deltaTime;
 
-		//para la muÒeca fomu
+		//para la mu√±eca fomu
 		muneca_rotTime += deltaTime;
 
 		//para la yae
@@ -1330,7 +1330,7 @@ int main()
 		uniformColor = shaderList[0].getColorLocation();
 		uniformTextureOffset = shaderList[0].getOffsetLocation(); // para la textura con movimiento
 		
-		//informaciÛn en el shader de intensidad especular y brillo
+		//informaci√≥n en el shader de intensidad especular y brillo
 		uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
 		uniformShininess = shaderList[0].GetShininessLocation();
 
@@ -1549,7 +1549,7 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		laboratorio_frank.RenderModel();
 
-		// ----------------------------------------- CientÌfico -----------------------------------------
+		// ----------------------------------------- Cient√≠fico -----------------------------------------
 		model = identidad;
 		model = glm::translate(model, glm::vec3(150.0, 17.0f, 200.0f));
 		model = glm::scale(model, glm::vec3(30.0f, 30.0f, 30.0f));
@@ -1586,7 +1586,7 @@ int main()
 		cientifico_piernas.RenderModel();
 
 		// ----------------------------------------- ZEPPELIN -----------------------------------------
-		// INICIA ANIMACI”N CON LA TECLA -> X
+		// INICIA ANIMACI√ìN CON LA TECLA -> X
 		if (mainWindow.animacionZeppelin()) {
 			tiempoZeppelin += 0.01f * deltaTime1 * velocidadZeppelin;
 
@@ -1729,9 +1729,9 @@ int main()
 
 		// =============================================================================== ANGEL ================================================================================================
 
-		// ========================== VÕAS DEL TREN ========================== //
+		// ========================== V√çAS DEL TREN ========================== //
 
-		float separacion = 9.0f; // ajusta seg˙n el tamaÒo de tu modelo
+		float separacion = 9.0f; // ajusta seg√∫n el tama√±o de tu modelo
 
 		for (int i = 0; i < 20; i++)
 		{
@@ -1744,7 +1744,7 @@ int main()
 			Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 			Vias_Madera.RenderModel();
 
-			// --- Rieles met·licos (Metal.jpg) ---
+			// --- Rieles met√°licos (Metal.jpg) ---
 			Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 			Vias_Rieles.RenderModel();
 
@@ -1818,7 +1818,7 @@ int main()
 			humoActivo = false;
 			humoIntensidad = 1.0f;
 			for (int i = 0; i < MAX_PARTICULAS; i++)
-				particulas[i].vida = 0.0f;  // matar todas las partÌculas vivas
+				particulas[i].vida = 0.0f;  // matar todas las part√≠culas vivas
 		}
 
 		humoIntensidad = glm::clamp(humoIntensidad, 0.0f, 1.0f);
@@ -1884,7 +1884,7 @@ int main()
 			manato_armSwing *= 0.85f;
 		}
 
-		// PosiciÛn base de Manato
+		// Posici√≥n base de Manato
 		glm::vec3 manato_pos = glm::vec3(
 			mainWindow.getManatoX(),
 			-1.0f + manato_bodyBob,
@@ -1991,13 +1991,13 @@ int main()
 		// ----------------------------------------- NPC GUMMY -----------------------------------------
 		gummy_tiempo += deltaTime * 0.1f;
 
-		// Brazo derecho: saluda inclin·ndose con el sombrero (oscila entre -30∞ y -90∞)
+		// Brazo derecho: saluda inclin√°ndose con el sombrero (oscila entre -30¬∞ y -90¬∞)
 		gummy_armAngle = 45.0f + sin(gummy_tiempo * 2.5f) * 45.0f;
 
-		// Cola: oscila suavemente izquierda y derecha (±15∞)
+		// Cola: oscila suavemente izquierda y derecha (¬±15¬∞)
 		gummy_tailAngle = sin(gummy_tiempo * 1.8f) * 15.0f;
 
-		glm::vec3 gummyPos = glm::vec3(8.0f, -1.0f, 20.0f); // ajusta posiciÛn en la escena
+		glm::vec3 gummyPos = glm::vec3(8.0f, -1.0f, 20.0f); // ajusta posici√≥n en la escena
 
 		// --- Cuerpo ---
 		model = identidad;
@@ -2029,7 +2029,7 @@ int main()
 		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		Gummy_RightArm.RenderModel();
 
-		// --- Sombrero (est·tico en la cabeza) ---
+		// --- Sombrero (est√°tico en la cabeza) ---
 		model = identidad;
 		model = glm::translate(model, gummyPos);
 		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -2050,8 +2050,8 @@ int main()
 		//Lycaon
 		//Lycaon
 		model = identidad;
-		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 10.0f));  // frente a la c·mara al inicio
-		// Sin rotaciÛn extra ó el modelo ya est· orientado correctamente en Blender
+		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 10.0f));  // frente a la c√°mara al inicio
+		// Sin rotaci√≥n extra ‚Äî el modelo ya est√° orientado correctamente en Blender
 		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
@@ -2351,14 +2351,14 @@ int main()
 			puerta.RenderModel();
 		}
 
-		// rendedr para la muÒeca
+		// rendedr para la mu√±eca
 
 	   //---------------------------------CUERPO FOMU---------------------------------------------//
 		modelCuerpoMuneca = modelSantuario;
 		modelCuerpoMuneca = glm::translate(modelCuerpoMuneca, glm::vec3(-1.372f, 7.185f, 16.27f));
 		modelCuerpoMuneca = glm::scale(modelCuerpoMuneca, glm::vec3(0.1f, 0.1f, 0.1f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelCuerpoMuneca));
-		cuerpo_muÒeca.RenderModel();
+		cuerpo_mu√±eca.RenderModel();
 
 		//------------------------------------CABEZA-------------------------------------------------//
 		modelMuneca = modelCuerpoMuneca;
@@ -2366,7 +2366,7 @@ int main()
 		GLfloat muneca_rotAngle = 45.0f * sinf(muneca_rotTime * 0.05f);
 		modelMuneca = glm::rotate(modelMuneca, muneca_rotAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMuneca));
-		muÒeca.RenderModel();
+		mu√±eca.RenderModel();
 
 		//render para el personaje
 		// -----------------------------------------YAE MIKO-----------------------------------------//

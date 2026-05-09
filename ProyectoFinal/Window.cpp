@@ -1,4 +1,5 @@
 #include "Window.h"
+#include <cmath>
 
 Window::Window()
 {
@@ -9,13 +10,13 @@ Window::Window()
 		keys[i] = 0;
 	}
 }
+
 Window::Window(GLint windowWidth, GLint windowHeight)
 {
 	width = windowWidth;
 	height = windowHeight;
 	muevex = 2.0f;
 
-	// Posicion y velocidad locomotora
 	locoPos = 0.0f;
 	locoVel = 0.0f;
 	locoAdelante = false;
@@ -24,8 +25,6 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	// ========== Bangboo ========== //
 	bangbooPosX = -2.0f;  // posición inicial igual a la que tenías en ProyectoFinal.cpp
 	bangbooPosZ = 5.0f;
-	// ============================= //
-	// ===================================== //
 
 	// Manato
 	manatoPosX = 0.0f;
@@ -34,8 +33,6 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	manatoDir = 1;
 	manatoMoving = false;
 	manatoWalkTime = 0.0f;
-
-	
 
 
 	// ============================= FLAGS ======================
@@ -57,6 +54,7 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 		keys[i] = 0;
 	}
 }
+
 int Window::Initialise()
 {
 	//Inicialización de GLFW
@@ -160,7 +158,7 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 	}
 	// ------------------ Locomotora FIN -------------------
 
-		// ------------------ Movimiento MANATO -----------------------
+	// ------------------ Movimiento MANATO -----------------------
 // M = adelante, N = atrás, B = izquierda, H = derecha
 	if (key == GLFW_KEY_M)
 	{
@@ -207,8 +205,6 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 			theWindow->manatoMoving = false;
 	}
 	// ------------------ Movimiento MANATO FIN -----------------------
-
-
 
 
 
@@ -286,6 +282,89 @@ void Window::ManejaMouse(GLFWwindow* window, double xPos, double yPos)
 
 	theWindow->lastX = xPos;
 	theWindow->lastY = yPos;
+}
+
+void Window::updateLoco(GLfloat deltaTime)
+{
+	if (locoAdelante)
+		locoVel += LOCO_ACELERACION * deltaTime;
+	else if (locoAtras)
+		locoVel -= LOCO_ACELERACION * deltaTime;
+	else
+	{
+		if (locoVel > 0.0f)
+			locoVel -= LOCO_FRICCION * deltaTime;
+		else if (locoVel < 0.0f)
+			locoVel += LOCO_FRICCION * deltaTime;
+
+		if (locoVel > -0.05f && locoVel < 0.05f)
+			locoVel = 0.0f;
+	}
+
+	if (locoVel > LOCO_VEL_MAX) locoVel = LOCO_VEL_MAX;
+	if (locoVel < -LOCO_VEL_MAX) locoVel = -LOCO_VEL_MAX;
+
+	locoPos += locoVel * deltaTime;
+
+	if (locoPos >= LOCO_LARGO_VIA)
+	{
+		locoPos = LOCO_LARGO_VIA;  // tope al final
+		locoVel = 0.0f;            // frena completamente
+	}
+	if (locoPos <= 0.0f)
+	{
+		locoPos = 0.0f;            // tope al inicio
+		locoVel = 0.0f;            // frena completamente
+	}
+}
+
+void Window::updateBangboo(GLfloat deltaTime)
+{
+	if (keys[GLFW_KEY_LEFT])
+		bangbooPosX -= BANGBOO_VEL * deltaTime;
+
+	if (keys[GLFW_KEY_RIGHT])
+		bangbooPosX += BANGBOO_VEL * deltaTime;
+
+	if (keys[GLFW_KEY_UP])
+		bangbooPosZ += BANGBOO_VEL * deltaTime;
+
+	if (keys[GLFW_KEY_DOWN])
+		bangbooPosZ -= BANGBOO_VEL * deltaTime;
+}
+
+void Window::updateManato(GLfloat deltaTime)
+{
+	bool arriba = keys[GLFW_KEY_M];
+	bool abajo = keys[GLFW_KEY_N];
+	bool izquierda = keys[GLFW_KEY_B];
+	bool derecha = keys[GLFW_KEY_H];
+
+	manatoMoving = arriba || abajo || izquierda || derecha;
+
+	if (!manatoMoving)
+	{
+		manatoWalkTime = 0.0f;
+		return;
+	}
+
+	manatoWalkTime += deltaTime * 4.0f;
+
+	float dx = 0.0f, dz = 0.0f;
+
+	if (arriba)    dz += MANATO_VEL * deltaTime;
+	if (abajo)     dz -= MANATO_VEL * deltaTime;
+	if (derecha)   dx += MANATO_VEL * deltaTime;
+	if (izquierda) dx -= MANATO_VEL * deltaTime;
+
+	// Calcula el ángulo según la dirección
+	if (dx != 0.0f || dz != 0.0f)
+	{
+		manatoAngle = atan2(dx, dz) * (180.0f / 3.14159265f);
+	}
+
+	manatoPosX += dx;
+	manatoPosZ += dz;
 }
 
 

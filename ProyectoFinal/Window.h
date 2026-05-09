@@ -27,7 +27,7 @@ public:
 	int getVistaEstaticaActual() { return vistaEstaticaActual; }
 		
 	// ============================================================================
-	// Locomotora
+		// Locomotora
 	GLfloat getLocoPosZ() { return locoPos; }
 	GLfloat getLocoVel() { return locoVel; }
 	void    updateLoco(GLfloat deltaTime);
@@ -37,8 +37,6 @@ public:
 	GLfloat getBangbooPosZ() { return bangbooPosZ; }
 	void updateBangboo(GLfloat deltaTime);
 
-
-
 	// Manato
 	GLfloat getManatoX() { return manatoPosX; }
 	GLfloat getManatoZ() { return manatoPosZ; }
@@ -47,9 +45,6 @@ public:
 	bool    getManatoMoving() { return manatoMoving; }
 	GLfloat getManatoWalkTime() { return manatoWalkTime; }
 	void    updateManato(GLfloat deltaTime);
-
-
-
 
 
 
@@ -72,16 +67,8 @@ private:
 	GLfloat xChange;
 	GLfloat yChange;
 	GLfloat muevex;
-	
-	// ============================ Entradas por teclado ==========================
-	bool flagAnimacionZeppelin;
-	bool flagLuzTren, flagLuzEstatua;
 
-	// ============================ camara por teclado ==========================
-	int camaraActual;
-	int vistaEstaticaActual;
-	
-	// ========================================= //
+	// -----------------
 	GLfloat locoVel;
 	GLfloat locoPos;
 	bool locoAdelante;
@@ -105,6 +92,17 @@ private:
 	GLfloat manatoWalkTime; // acumula tiempo para ciclo de caminata
 	const float MANATO_VEL = 0.5f;
 
+
+	
+	// ============================ Entradas por teclado ==========================
+	bool flagAnimacionZeppelin;
+	bool flagLuzTren, flagLuzEstatua;
+
+	// ============================ camara por teclado ==========================
+	int camaraActual;
+	int vistaEstaticaActual;
+	
+	// ========================================= //
 
 
 	bool mouseFirstMoved;
