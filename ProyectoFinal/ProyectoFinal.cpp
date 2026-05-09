@@ -667,8 +667,8 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// // ================================================================= SKYBOX  ========================================================================================================= //
-		// Dia  -    0  -> 30 seg
-		// noche -   31 -> 60 seg
+		// Dia  -    0  -> 40 seg
+		// noche -   41 -> 80 seg
 		horarioDiaNoche = fmod(glfwGetTime(), 80.0f);
 		if (horarioDiaNoche <= 40.0f) flagDiaNoche = true;
 		else flagDiaNoche = false;
@@ -932,7 +932,7 @@ int main()
 		cientifico_piernas.RenderModel();
 
 		// ----------------------------------------- ZEPPELIN -----------------------------------------
-		// INICIA ANIMACIÓN CON LA TECLA -> X
+		// INICIA ANIMACIÓN CON LA TECLA -> Z
 		if (mainWindow.animacionZeppelin()) {
 			tiempoZeppelin += 0.01f * deltaTime * velocidadZeppelin;
 
