@@ -40,18 +40,31 @@ Window mainWindow;
 std::vector<Mesh*> meshList;
 std::vector<Shader> shaderList;
 
+//======shaders fernando=====//
+Shader shaderHojas;
+//======shaders fernando=====//
+
+
 Camera camera;
 
+// ================== TEXTURAS FERNANDO ======================= //
 
-// ================== TEXTURAS ======================= //
+//Texture pisoTexture;
+Texture grassTexture;
+Texture aguaTexture;
+
+
+// ================== TEXTURAS QUETZALLI ======================= //
 
 Texture pisoTexture_piedra;
 Texture pisoTexture_tierra;
 
 Texture FuegoTexture;
 
+// ================== TEXTURAS QUETZALLI ======================= //
 
-// ================== MODELOS ======================= //
+
+// ================== MODELOS QUETZALLI ======================= //
 
 Model lampara;
 Model letrero;
@@ -73,6 +86,46 @@ Model zeppelin_helice_arriba;
 
 Model reflector;
 Model estatua;
+// ================== MODELOS QUETZALLI ======================= //
+
+//-----------INICIA DECLARACIÓN MODELOS FERNANDO-----------------//
+Model santuario_narukami;
+Model lamp1;
+Model lamp2;
+Model lamp3;
+Model lamp_sup;
+Model lamp_base;
+Model hojas;
+Model arbusto;
+Model arbusto2;
+Model tp;
+Model base_tp;
+Model puerta;
+Model estatua;
+Model base_estatua;
+
+Model coche;
+Model llanta;
+
+Model cabeza;
+Model hombro_izq;
+Model hombro_der;
+Model mano_izq;
+Model mano_der;
+Model torso;
+Model muslo_izq;
+Model muslo_der;
+Model tibia_izq;
+Model tibia_der;
+Model pie_izq;
+Model pie_der;
+
+Model muñeca;
+Model cuerpo_muñeca;
+
+//-----------TERMINA DECLARACIÓN MODELOS FERNANDO-----------------//
+
+
 
 
 // ================== LUCES ======================= //
@@ -80,6 +133,7 @@ Model estatua;
 // luz direccional Dia
 DirectionalLight mainLightDia;
 DirectionalLight mainLightNoche;
+
 //para declarar varias luces de tipo pointlight
 PointLight pointLights[MAX_POINT_LIGHTS];
 
@@ -91,13 +145,11 @@ SpotLight spotLights4[MAX_SPOT_LIGHTS];
 
 
 // ================== SKYBOX ======================= //
-
 Skybox skyboxDia;
 Skybox skyboxNoche;
 
 float horarioDiaNoche = 0.0f;
 bool flagDiaNoche = true;
-
 
 // ================================================= //
 
@@ -239,6 +291,11 @@ void CreateShaders()
 	Shader *shader1 = new Shader();
 	shader1->CreateFromFiles(vShader, fShader);
 	shaderList.push_back(*shader1);
+
+	//======nuevo shader fernando=====///
+	shaderHojas.CreateFromFiles("shader_hojas.vert",
+		"shader_hojas.frag");
+
 }
 
 
@@ -315,6 +372,70 @@ void CrearDado()
 
 }
 
+//-----------INICIO FUNCION ANIMACION COCHE FERNANDO--------------------------//
+//funcion para la animacion del coche de fernando
+
+
+const glm::vec3 elipseCentro = glm::vec3(-18.0f, 0.0f, 25.0f);
+const float     elipseRadioX = 14.0f;
+const float     elipseRadioZ = 18.0f;
+const int       elipsePuntos = 32;
+static std::vector<glm::vec3> GenerarElipse()
+{
+	std::vector<glm::vec3> puntos;
+	for (int i = 0; i <= elipsePuntos; i++)
+	{
+		float angulo = (2.0f * 3.14159265f * i) / elipsePuntos;
+		float x = elipseCentro.x + elipseRadioX * cosf(angulo);
+		float z = elipseCentro.z + elipseRadioZ * sinf(angulo);
+		puntos.push_back(glm::vec3(x, elipseCentro.y, z));
+	}
+	return puntos;
+}
+
+static const std::vector<glm::vec3> trackWaypoints = GenerarElipse();
+glm::vec3 CatmullRom(const glm::vec3& p0, const glm::vec3& p1,
+	const glm::vec3& p2, const glm::vec3& p3, float t)
+{
+	float t2 = t * t, t3 = t2 * t;
+	return 0.5f * (
+		(2.0f * p1) +
+		(-p0 + p2) * t +
+		(2.0f * p0 - 5.0f * p1 + 4.0f * p2 - p3) * t2 +
+		(-p0 + 3.0f * p1 - 3.0f * p2 + p3) * t3
+		);
+}
+
+static glm::vec3 SamplePath(float t)
+{
+	int n = (int)trackWaypoints.size();
+	float s = t * (n - 1);
+	int i1 = glm::clamp((int)s, 0, n - 1);
+	int i0 = glm::clamp(i1 - 1, 0, n - 1);
+	int i2 = glm::clamp(i1 + 1, 0, n - 1);
+	int i3 = glm::clamp(i1 + 2, 0, n - 1);
+	float lt = s - (float)i1;
+	return CatmullRom(trackWaypoints[i0], trackWaypoints[i1],
+		trackWaypoints[i2], trackWaypoints[i3], lt);
+}
+
+void GetPathPosAndTangent(float t, glm::vec3& outPos, glm::vec3& outTangent)
+{
+	outPos = SamplePath(t);
+	const float eps = 0.001f;
+	glm::vec3 posA = SamplePath(glm::clamp(t - eps, 0.0f, 1.0f));
+	glm::vec3 posB = SamplePath(glm::clamp(t + eps, 0.0f, 1.0f));
+	glm::vec3 diff = posB - posA;
+	if (glm::length(diff) < 1e-6f)
+		outTangent = glm::vec3(0.0f, 0.0f, 1.0f);
+	else
+		outTangent = glm::normalize(diff);
+}
+
+//------------FIN FUNCION ANIMACION COCHE FERNANDO--------------------------//
+
+
+
 
 int main()
 {
@@ -336,6 +457,15 @@ int main()
 
 	FuegoTexture = Texture("Textures/fuego.tga");
 	FuegoTexture.LoadTextureA();
+
+	//=========TEXTURA PASTO FERNANDO===========//
+
+	aguaTexture = Texture("Textures/agua.png");
+	aguaTexture.LoadTextureA();
+
+	grassTexture = Texture("Textures/Grass.png");
+	grassTexture.LoadTextureA();
+
 	
 	// ================== MODELOS ======================= //
 
@@ -390,14 +520,102 @@ int main()
 	estatua = Model();
 	estatua.LoadModel("Models/estatua.obj");
 	// ========================================= //
-		
-	/*skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
-	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_lf.tga");
-	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_dn.tga");
-	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_up.tga");
-	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_bk.tga");
-	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_ft.tga");*/
 
+	// =================INICIA LLAMADO A MODELOS FERNANDO======================== //
+	santuario_narukami = Model();
+	santuario_narukami.LoadModel("Models/santuario_narukami.obj");
+
+	lamp1 = Model();
+	lamp1.LoadModel("Models/Narukami_Lamp_1.obj");
+
+	lamp2 = Model();
+	lamp2.LoadModel("Models/Narukami_Lampara_dos.obj");
+
+	lamp3 = Model();
+	lamp3.LoadModel("Models/narukami_lampara_3.obj");
+
+	lamp_sup = Model();
+	lamp_sup.LoadModel("Models/lampara_supp.obj");
+
+	lamp_base = Model();
+	lamp_base.LoadModel("Models/base_lampara.obj");
+
+	hojas = Model();
+	hojas.LoadModel("Models/hojas_sakura.obj");
+
+	arbusto = Model();
+	arbusto.LoadModel("Models/arbustos_narukami.obj");
+
+	arbusto2 = Model();
+	arbusto2.LoadModel("Models/arbustos_narukami2.obj");
+
+	tp = Model();
+	tp.LoadModel("Models/tp.obj");
+
+	base_tp = Model();
+	base_tp.LoadModel("Models/tp_base.obj");
+
+	puerta = Model();
+	puerta.LoadModel("Models/puerta_torii_narukami.obj");
+
+	estatua = Model();
+	estatua.LoadModel("Models/estatua_zorro_narukami.obj");
+
+	base_estatua = Model();
+	base_estatua.LoadModel("Models/base_zorro_narukami.obj");
+
+	coche = Model();
+	coche.LoadModel("Models/coche.obj");
+
+	llanta = Model();
+	llanta.LoadModel("Models/llantas_coche.obj");
+
+	cabeza = Model();
+	cabeza.LoadModel("Models/yae_head.obj");
+
+	mano_izq = Model();
+	mano_izq.LoadModel("Models/mano_izq_yae.obj");
+
+	mano_der = Model();
+	mano_der.LoadModel("Models/mano_der_yae.obj");
+
+	torso = Model();
+	torso.LoadModel("Models/torso_yae.obj");
+
+	hombro_izq = Model();
+	hombro_izq.LoadModel("Models/hombro_izq_yae.obj");
+
+	hombro_der = Model();
+	hombro_der.LoadModel("Models/hombro_der_yae.obj");
+
+	muslo_izq = Model();
+	muslo_izq.LoadModel("Models/muslo_izq_yae.obj");
+
+	muslo_der = Model();
+	muslo_der.LoadModel("Models/muslo_der_yae.obj");
+
+	tibia_izq = Model();
+	tibia_izq.LoadModel("Models/tibia_izq_yae.obj");
+
+	tibia_der = Model();
+	tibia_der.LoadModel("Models/tibia_der_yae.obj");
+
+	pie_izq = Model();
+	pie_izq.LoadModel("Models/pie_izq_yae.obj");
+
+	pie_der = Model();
+	pie_der.LoadModel("Models/pie_der_yae.obj");
+
+	muñeca = Model();
+	muñeca.LoadModel("Models/mascara_kitsune.obj");
+
+	cuerpo_muñeca = Model();
+	cuerpo_muñeca.LoadModel("Models/muneca_cuerpo.obj");
+
+	// =================TERMINA LLAMADO A MODELOS FERNANDO======================== //
+
+
+	
 	// ================== SKYBOX DIA ======================= //
 	std::vector<std::string> skyboxFacesDia;
 
@@ -468,6 +686,61 @@ int main()
 	//	0.0f, 0.0f, 0.0f,
 	//	0.3f, 0.2f, 0.1f);
 	//pointLightCount++;
+
+		// ===============INICIA POINTLIGHTS FERNANDO========================== //
+
+	// Lámparas del santuario 
+	for (int i = 1; i <= 28; i++)
+	{
+		pointLights[i] = PointLight(1.0f, 0.85f, 0.6f,
+			0.0f, 1.5f,
+			0.0f, 0.0f, 0.0f,
+			0.5f, 0.3f, 0.1f);
+		pointLightCount++;
+	}
+
+	// Lámparas lamp3
+	pointLights[29] = PointLight(1.0f, 0.85f, 0.6f,
+		0.0f, 1.5f,
+		0.0f, 0.0f, 0.0f,
+		0.5f, 0.3f, 0.1f);
+	pointLightCount++;
+
+	pointLights[30] = PointLight(1.0f, 0.85f, 0.6f,
+		0.0f, 1.5f,
+		0.0f, 0.0f, 0.0f,
+		0.5f, 0.3f, 0.1f);
+	pointLightCount++;
+
+	//lampara separada
+	for (int i = 31; i <= 34; i++)
+	{
+		pointLights[i] = PointLight(1.0f, 0.85f, 0.6f,
+			0.0f, 2.5f,
+			0.0f, 0.0f, 0.0f,
+			0.5f, 0.5f, 0.3f);
+		pointLightCount++;
+	}
+
+	// Lámparas lamp1 
+	for (int i = 35; i <= 46; i++)
+	{
+		pointLights[i] = PointLight(1.0f, 0.85f, 0.6f,
+			0.0f, 1.5f,
+			0.0f, 0.0f, 0.0f,
+			0.5f, 0.3f, 0.1f);
+		pointLightCount++;
+	}
+
+	// PointLight tp
+	pointLights[47] = PointLight(0.0f, 0.0f, 1.0f,
+		0.0f, 2.0f,
+		0.0f, 0.0f, 0.0f,
+		0.4f, 0.3f, 0.1f);
+	pointLightCount++;
+
+	// ===================TERMINAN POINTLIGHTS FERNANDO========================== //
+
 
 	// ================================================== SPOTLIGHTS ===================================== //
 	
@@ -574,6 +847,7 @@ int main()
 	
 	//Configuration
 	GLfloat now = 0.0f;
+	GLfloat bobOffset = 0.0f;
 	glm::vec3 lowerLight;
 
 
@@ -589,6 +863,124 @@ int main()
 	identidad = glm::mat4(1.0);
 	
 	glm::vec3 pos_spotlights;
+
+	//===============INICIAN VARIABLES FERNANDO===========//
+	glm::mat4 modelBase(1.0);
+	glm::mat4 modelPasto(1.0);
+	glm::mat4 modelBaseTp = glm::mat4(1.0);
+	glm::mat4 modelTp = glm::mat4(1.0);
+	glm::mat4 modelBaseEstatua = glm::mat4(1.0);
+	glm::mat4 modelCuerpoMuneca = glm::mat4(1.0);
+	glm::mat4 modelMuneca = glm::mat4(1.0);
+	glm::mat4 modelCharBase = glm::mat4(1.0);
+	glm::mat4 modelTorso = glm::mat4(1.0);
+	glm::mat4 modelCabeza = glm::mat4(1.0);
+	glm::mat4 modelHombroDer = glm::mat4(1.0);
+	glm::mat4 modelManoDer = glm::mat4(1.0);
+	glm::mat4 modelHombroIzq = glm::mat4(1.0);
+	glm::mat4 modelManoIzq = glm::mat4(1.0);
+	glm::mat4 modelMusloDer = glm::mat4(1.0);
+	glm::mat4 modelTibiaDer = glm::mat4(1.0);
+	glm::mat4 modelPieDer = glm::mat4(1.0);
+	glm::mat4 modelMusloIzq = glm::mat4(1.0);
+	glm::mat4 modelTibiaIzq = glm::mat4(1.0);
+	glm::mat4 modelPieIzq = glm::mat4(1.0);
+	glm::mat4 modelEstatua = glm::mat4(1.0);
+	glm::mat4 modelSantuario = glm::mat4(1.0);
+	glm::mat4 modelCoche = glm::mat4(1.0);
+
+	glm::vec3 tpWorldPos = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 santuarioPos = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 lightWorldPos = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 lampWorldPos = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 baseTpLocalPos = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 from = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 to = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 yae_worldPos = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 carPos(0.0f), carTangent(0.0f, 0.0f, 1.0f);
+	glm::vec3 carRight(1.0f, 0.0f, 0.0f);
+	glm::vec3 worldUp(0.0f, 1.0f, 0.0f);
+	glm::vec3 lampSupWorldPos = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 dir = glm::vec3(1.0f, 1.0f, 1.0f);
+
+
+	identidad = glm::mat4(1.0);
+
+	int lamp2Count = 0.0f;
+	int lamp3Count = 0.0f;
+	int lamp_base_count = 0.0f;
+	int lamp1_count = 0.0f;
+	int nextWP = 0.0f;
+	int yae_waypoint = 0;
+
+
+	float tiempoActual = 0.0f;
+	float pitchC = 0.0f;
+	float legSwingR = 0.0f;
+	float legSwingL = 0.0f;
+	float kneeBendR = 15.0f;
+	float kneeBendL = 15.0f;
+	float armSwingR = 0.0f;
+	float armSwingL = 0.0f;
+	float bobY = 0.0f;
+	float spd = 0.0f;
+	float segLen = 0.0f;
+	float yae_segT = 0.0f;
+	float yae_yaw = 0.0f;
+	float yae_pitch = 0.0f;
+	float yae_walkTime = 0.0f;
+	float yae_walkCycle = 0.0f;
+	float tCoche = 0.0f;
+	float rotllanta = 0.0f;
+	float yawCoche = 0.0f;
+	float pitchCoche = 0.0f;
+
+
+	const float vel_yae = 17.0f;
+	const float velTCoche = 0.0006f;
+
+	bool cochePausado = false;
+	bool teclaR = false;
+
+
+
+	// =================== TERMINAN VARIABLES FERNANDO ================= //
+
+	//===================INICIA ANIMACIONES FERNANDO=====================//
+
+	// ===============animacion  tp fernando========================== //
+	GLfloat tp_rotY = 0.0f;
+	GLfloat tp_bobTime = 0.0f;
+	//=================animacion fomu fernando=======================//
+
+	GLfloat muneca_rotTime = 0.0f;
+
+	//===============animacion yae fernando====================//
+
+	struct WaypointYae {
+		glm::vec3 pos;
+		float speed;
+	};
+
+	std::vector<WaypointYae> rutaYae = {
+
+			{ glm::vec3(-1.275f,  5.854f, -25.645f), 0.3f },
+			{ glm::vec3(-1.3635f, 5.848f, -31.405f), 0.3f },
+
+			{ glm::vec3(-6.921f,  5.054f, -33.28f),  0.2f },
+			{ glm::vec3(-10.133f, 4.165f, -32.725f), 0.2f },
+			{ glm::vec3(-13.846f, 2.725f, -31.44f),  0.2f },
+
+			{ glm::vec3(-10.133f, 4.165f, -32.725f), 0.2f },
+			{ glm::vec3(-6.921f,  5.054f, -33.28f),  0.2f },
+			{ glm::vec3(-1.3635f, 5.848f, -31.405f), 0.3f },
+	};
+
+	yae_worldPos = rutaYae[0].pos;
+
+	//===================TERMINA ANIMACIONES FERNANDO=====================//
+
+
 
 	// =================== ANIMACION GENERAL ================= //
 	glm::vec3 pos_obj;
@@ -645,6 +1037,86 @@ int main()
 		deltaTime += (now - lastTime) / limitFPS;
 		lastTime = now;
 
+		GLfloat rawDelta = now - lastTime;
+		deltaTime = rawDelta + rawDelta / limitFPS;
+		lastTime = now;
+
+
+		//====================INICIA IMPLEMENTACION ANIMACIONES FERNANDO=======//
+//para el tp
+		tp_rotY += 0.1f * deltaTime;
+		if (tp_rotY >= 360.0f) tp_rotY -= 360.0f;
+		tp_bobTime += deltaTime;
+
+		//para la muñeca fomu
+		muneca_rotTime += deltaTime;
+
+		//para la yae
+
+		{
+			nextWP = (yae_waypoint + 1) % (int)rutaYae.size();
+			from = rutaYae[yae_waypoint].pos;
+			to = rutaYae[nextWP].pos;
+			spd = rutaYae[yae_waypoint].speed;
+
+			segLen = glm::length(to - from);
+			if (segLen > 0.001f)
+			{
+				yae_segT += (spd / segLen) * rawDelta;
+
+				if (yae_segT >= 1.0f)
+				{
+					yae_segT -= 1.0f;
+					yae_waypoint = nextWP;
+					nextWP = (yae_waypoint + 1) % (int)rutaYae.size();
+					from = rutaYae[yae_waypoint].pos;
+					to = rutaYae[nextWP].pos;
+					segLen = glm::length(to - from);
+				}
+
+				yae_worldPos = glm::mix(from, to, yae_segT);
+
+				dir = to - from;
+				if (glm::length(glm::vec2(dir.x, dir.z)) > 0.001f)
+					yae_yaw = glm::degrees(atan2f(dir.x, dir.z));
+
+				float hDist = glm::length(glm::vec2(dir.x, dir.z));
+				if (hDist > 0.001f)
+					yae_pitch = glm::degrees(atan2f(dir.y, hDist));
+			}
+		}
+		yae_walkCycle = fmodf((float)glfwGetTime() * vel_yae, 2.0f * 3.14159f);
+
+
+		//animacion para el coche de fernando
+
+		bool* keys = mainWindow.getsKeys();
+		bool teclaRActual = keys[GLFW_KEY_R];
+		if (teclaRActual && !teclaR) {
+			tCoche = 0.0f;
+			rotllanta = 0.0f;
+		}
+		teclaR = teclaRActual;
+
+		tCoche += velTCoche * deltaTime;
+		if (tCoche >= 1.0f)
+			tCoche = 0.0f;
+
+		rotllanta += 360.0f * deltaTime;
+		if (rotllanta > 360.0f) rotllanta -= 360.0f;
+
+		GetPathPosAndTangent(tCoche, carPos, carTangent);
+		yawCoche = atan2f(carTangent.x, carTangent.z) * (180.0f / 3.14159265f);
+		pitchCoche = asinf(glm::clamp(carTangent.y, -1.0f, 1.0f)) * (180.0f / 3.14159265f);
+		carRight = glm::normalize(glm::cross(worldUp, carTangent));
+		if (glm::length(carRight) < 0.001f)
+			carRight = glm::vec3(1.0f, 0.0f, 0.0f);
+
+		//====================FIN IMPLEMENTACION ANIMACIONES FERNANDO=======//
+
+
+
+
 		//Recibir eventos del usuario
 		glfwPollEvents();
 		
@@ -667,8 +1139,8 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// // ================================================================= SKYBOX  ========================================================================================================= //
-		// Dia  -    0  -> 30 seg
-		// noche -   31 -> 60 seg
+		// Dia  -    0  -> 40 seg
+		// noche -   41 -> 80 seg
 		horarioDiaNoche = fmod(glfwGetTime(), 80.0f);
 		if (horarioDiaNoche <= 40.0f) flagDiaNoche = true;
 		else flagDiaNoche = false;
@@ -753,6 +1225,18 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		pisoTexture_piedra.UseTexture();
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		meshList[2]->RenderMesh();
+
+		//---------------------------------------PASTO-------------------------------------
+
+		model = identidad;
+		model = glm::translate(model, glm::vec3(-180.0f, -0.9f, -200.0f));
+		modelPasto = model;
+		model = glm::scale(model, glm::vec3(10.0f, 1.0f, 10.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		grassTexture.UseTexture();
 		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		meshList[2]->RenderMesh();
 
@@ -1071,6 +1555,434 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		letrero.RenderModel(); // cambiar por modelo de tren
 		// ================================================================= LUCES POR TECLADO ================================================================
+
+
+
+
+		//========================OBJETOS FERNANDO=========================================//
+		// ----------------------------------------- COCHE -----------------------------------------
+		model = identidad;
+		model = glm::translate(model, carPos);
+		model = glm::rotate(model, 180 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, yawCoche * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, -pitchCoche * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		modelCoche = model;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		coche.RenderModel();
+
+		// ----------------------------------------- LLANTAS COCHE -----------------------------------------
+		model = modelCoche;
+		model = glm::translate(model, glm::vec3(0.0f, 1.0f, -4.5f));
+		model = glm::rotate(model, rotllanta * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		llanta.RenderModel();
+
+		model = modelCoche;
+		model = glm::translate(model, glm::vec3(0.0, 1.0f, 4.5f));
+		model = glm::rotate(model, rotllanta * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		llanta.RenderModel();
+
+		//========================TERMINAN OBJETOS FERNANDO=========================================//
+
+				// ============INICIAN RENDERIZADOS FERNANDO================================ //
+		//agua
+
+		aguaTexture.UseTexture();
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+
+		//SANTURAIO
+		//NO rotar el santuario ni el pasto porque se rompen los pointlights
+
+		model = modelPasto;
+		model = glm::translate(model, glm::vec3(0.0f, -1.1f, 30.0f));
+		//model = glm::rotate(model, 180.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		modelSantuario = model;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		santuario_narukami.RenderModel();
+
+		glDisable(GL_BLEND);
+		glEnable(GL_CULL_FACE);
+
+		glm::vec3 lamp2_positions[] = {
+
+			//escaleras
+			{  -14.836f,  1.703f, -33.37f  },
+			{   -12.856f,  1.747f, -29.51f  },
+			{   -10.783f,  3.27f,  -35.13f  },
+			{   -9.483f,  3.06f,  -30.32f  },
+			{   -6.871f,    3.973f, -30.85f  },
+			{   -6.971f,  4.134f, -35.71f  },
+
+			//entrada por el tp
+			{   1.1f,    4.848f, -31.4f   },
+			{  -3.827f,  4.848f, -31.41f  },
+			{   1.182f,  4.86f,  -25.66f  },
+			{  -3.732f,  4.848f, -25.63f  },
+
+			//costado por la casa de entrada
+			{   5.656f,  7.681f,  -2.562f },
+			{   5.621f,  7.681f,   2.167f },
+			{  -8.394f,  7.681f,  -2.545f },
+			{  -8.362f,  7.681f,   2.268f },
+
+			//costados de las otras dos casas
+			{ -15.244f,  8.397f,  11.3f   },
+			{ -21.774f,  8.397f,  14.56f  },
+			{ -21.774f,  8.397f,  17.85f  },
+			{ -15.324f,  8.397f,  21.04f  },
+			{  12.546f,  8.397f,  11.38f  },
+			{  18.976f,  8.397f,  14.54f  },
+			{  18.976f,  8.397f,  17.97f  },
+			{  12.546f,  8.397f,  21.02f  },
+
+			//centro del patio interior
+			{  -3.894f,  7.185f,  13.73f  },
+			{   1.145f,  7.185f,  13.71f  },
+			{   1.1f,    7.185f,  18.82f  },
+			{  -3.839f,  7.185f,  18.82f  },
+
+			//cerca del arbol principal
+			{ -5.864f,  9.999f, 27.84f },
+			{   3.123f, 9.999f, 27.85f  }
+		};
+		lamp2Count = sizeof(lamp2_positions) / sizeof(lamp2_positions[0]);
+
+		for (int i = 0; i < lamp2Count; i++)
+		{
+			model = modelSantuario;
+			model = glm::translate(model, lamp2_positions[i]);
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			lamp2.RenderModel();
+
+			santuarioPos = glm::vec3(modelSantuario[3]);
+			lightWorldPos = santuarioPos + lamp2_positions[i] + glm::vec3(0.0f, 0.5f, 0.0f);
+			pointLights[i + 1].SetPos(lightWorldPos);
+		}
+
+		shaderList[0].SetPointLights(pointLights, pointLightCount);
+
+		glDisable(GL_CULL_FACE);
+		//-------------------------------LAMP3-----------------------------------//
+		glm::vec3 lamp3_positions[] = {
+			{ -16.01f,  5.433f, -0.88f },
+			{ -15.94f,  5.179f, -4.07f }
+		};
+		lamp3Count = sizeof(lamp3_positions) / sizeof(lamp3_positions[0]);;
+
+		for (int i = 0; i < lamp3Count; i++)
+		{
+			model = modelSantuario;
+			model = glm::translate(model, lamp3_positions[i]);
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			lamp3.RenderModel();
+
+			santuarioPos = glm::vec3(modelSantuario[3]);
+			lightWorldPos = santuarioPos + lamp3_positions[i] + glm::vec3(0.0f, 1.7f, 0.0f);
+			pointLights[29 + i].SetPos(lightWorldPos);
+		}
+
+		//---------------------------------LAMPARAS SEPARADAS-----------------------------------//
+		glm::vec3 lamp_base_positions[] = {
+				 {  1.102f,  4.102f, -19.98f },  // 1
+				 { -3.766f,  4.134f, -19.98f },  // 2
+				 {  0.900f,  7.172f, 20.001f},   //3 
+				 {   -3.515,  7.076f,  20.001f},  // 4
+
+		};
+		lamp_base_count = sizeof(lamp_base_positions) / sizeof(lamp_base_positions[0]);
+
+		for (int i = 0; i < lamp_base_count; i++)
+		{
+			model = modelSantuario;
+			model = glm::translate(model, lamp_base_positions[i]);
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			lamp_base.RenderModel();
+
+			modelBase = model;
+			model = modelBase;
+			model = glm::translate(model, glm::vec3(0.0f, 1.3f, 0.0f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			lamp_sup.RenderModel();
+
+			lampSupWorldPos = glm::vec3(model[3]);
+			lightWorldPos = lampSupWorldPos + glm::vec3(0.0f, 0.5f, 0.0f);
+			pointLights[31 + i].SetPos(lightWorldPos);
+		}
+
+		//----------------------------------LAMP1-------------------------------------//
+		glm::vec3 lamp1_positions[] = {
+				{ 3.542f,  7.120f, -29.99f },
+				{ 3.539f,  7.126f, -26.71f },
+				{ 1.645f,  9.102f, -12.44f },
+				{ -4.233f, 9.134f, -12.44f  },
+				{ 1.223f,  10.502f, -5.02f },
+				{ -4.223f, 10.534f, -5.02f  },
+				{ 1.623f,  10.402f, 7.70f },
+				{ -4.300f,  10.402f, 7.70f },
+				{  -8.894f, 10.2f,  14.855f  },
+				{  -8.839f,  10.2f,  17.7f  },
+				{   6.145f,  10.2f,  14.855f  },
+				{   6.1f,    10.2f,  17.7f  },
+		};
+		lamp1_count = sizeof(lamp1_positions) / sizeof(lamp1_positions[0]);
+
+		for (int i = 0; i < lamp1_count; i++)
+		{
+			model = modelSantuario;
+			model = glm::translate(model, lamp1_positions[i]);
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			lamp1.RenderModel();
+
+			lampWorldPos = glm::vec3(model[3]);
+			lightWorldPos = lampWorldPos + glm::vec3(0.0f, 0.5f, 0.0f);
+			pointLights[35 + i].SetPos(lightWorldPos);
+		}
+
+		glEnable(GL_CULL_FACE);
+
+		//------------------------------------BASE TP----------------------------//		
+		baseTpLocalPos = glm::vec3(-6.427f, 5.231f, -27.4f);
+		modelBaseTp = modelSantuario;
+		modelBaseTp = glm::translate(modelBaseTp, baseTpLocalPos);
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelBaseTp));
+		base_tp.RenderModel();
+
+		//------------------------------------------TP-----------------------//
+		bobOffset = 0.3f * sinf(tp_bobTime * 0.01f);
+
+		modelTp = modelBaseTp;
+		model = modelTp;
+		model = glm::translate(model, glm::vec3(0.0f, 2.5f + bobOffset, 0.0f));
+		model = glm::rotate(model, tp_rotY * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		tp.RenderModel();
+
+		tpWorldPos = glm::vec3(model[3]);
+		pointLights[47].SetPos(tpWorldPos + glm::vec3(0.0f, 1.5f, 0.0f));
+		shaderList[0].SetPointLights(pointLights, pointLightCount);
+
+		//--------------------------------ESTATUA ZORRO-----------------------------//
+
+
+		glm::vec3 baseEstatua_positions[] = {
+			{ -4.115f,  6.676f,  25.001f },
+			{  1.500f,  6.672f,  25.001f }
+		};
+
+		glm::vec3 estatua_positions[] = {
+			{ -0.081f, 5.476f,  0.181f },
+			{ 0.181f, 5.492f,  0.181f }
+		};
+
+		for (int i = 0; i < 2; i++)
+		{
+			modelBaseEstatua = modelSantuario;
+			modelBaseEstatua = glm::translate(modelBaseEstatua, baseEstatua_positions[i]);
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelBaseEstatua));
+			base_estatua.RenderModel();
+
+			modelEstatua = modelBaseEstatua;
+			modelEstatua = glm::translate(modelEstatua, estatua_positions[i]);
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelEstatua));
+			estatua.RenderModel();
+		}
+
+		// ------------------------------PUERTAS TORII-----------------------------------//
+		glm::vec3 puerta_positions[] = {
+				{ -12.846f,  1.725f, -31.64f  },
+				{ -9.133f,  3.165f, -32.725f },
+				{  -5.921f,  4.054f, -33.28f  }
+		};
+
+		float puerta_rotations[] = {
+			25.0f,
+			10.0f,
+			0.0f
+		};
+
+		for (int i = 0; i < 3; i++)
+		{
+			model = modelSantuario;
+			model = glm::translate(model, puerta_positions[i]);
+			model = glm::rotate(model, puerta_rotations[i] * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			puerta.RenderModel();
+		}
+
+		// rendedr para la muñeca
+
+	   //---------------------------------CUERPO FOMU---------------------------------------------//
+		modelCuerpoMuneca = modelSantuario;
+		modelCuerpoMuneca = glm::translate(modelCuerpoMuneca, glm::vec3(-1.372f, 7.185f, 16.27f));
+		modelCuerpoMuneca = glm::scale(modelCuerpoMuneca, glm::vec3(0.1f, 0.1f, 0.1f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelCuerpoMuneca));
+		cuerpo_muñeca.RenderModel();
+
+		//------------------------------------CABEZA-------------------------------------------------//
+		modelMuneca = modelCuerpoMuneca;
+		modelMuneca = glm::translate(modelMuneca, glm::vec3(0.0f, 2.0f, 0.0f));
+		GLfloat muneca_rotAngle = 45.0f * sinf(muneca_rotTime * 0.05f);
+		modelMuneca = glm::rotate(modelMuneca, muneca_rotAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMuneca));
+		muñeca.RenderModel();
+
+		//render para el personaje
+		// -----------------------------------------YAE MIKO-----------------------------------------//
+
+		tiempoActual = fmodf((float)glfwGetTime(), 6.2831f);
+		pitchC = (yae_pitch > 0.0f) ? -(yae_pitch * 0.5f) : -(yae_pitch * 0.8f);
+
+		legSwingR = sinf(tiempoActual * 2.0f) * 45.0f;
+		legSwingL = -sinf(tiempoActual * 2.0f) * 45.0f;
+		armSwingR = -sinf(tiempoActual * 2.0f) * 45.0f;
+		armSwingL = sinf(tiempoActual * 2.0f) * 45.0f;
+		bobY = sinf(tiempoActual * 4.0f) * 0.015f;
+
+		// base del personaje
+		modelCharBase = modelSantuario;
+		modelCharBase = glm::translate(modelCharBase, yae_worldPos + glm::vec3(0.0f, bobY + 1.0f, 0.0f));
+		modelCharBase = glm::rotate(modelCharBase, (yae_yaw + 180.0f) * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		modelCharBase = glm::rotate(modelCharBase, pitchC * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+
+		//torso
+		modelTorso = modelCharBase;
+		modelTorso = glm::scale(modelTorso, glm::vec3(5.0f, 5.0f, 5.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelTorso));
+		torso.RenderModel();
+
+		// cabeza
+		modelCabeza = modelTorso;
+		modelCabeza = glm::translate(modelCabeza, glm::vec3(0.0f, 0.118f, 0.010f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelCabeza));
+		cabeza.RenderModel();
+
+		// hombro der
+		modelHombroDer = modelTorso;
+		modelHombroDer = glm::translate(modelHombroDer, glm::vec3(0.034f, 0.090f, 0.020f));
+		modelHombroDer = glm::rotate(modelHombroDer, armSwingR * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelHombroDer));
+		hombro_der.RenderModel();
+
+		// mano der
+		modelManoDer = modelHombroDer;
+		modelManoDer = glm::translate(modelManoDer, glm::vec3(0.048f, -0.040f, 0.001f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelManoDer));
+		mano_der.RenderModel();
+
+		// hombor izq
+		modelHombroIzq = modelTorso;
+		modelHombroIzq = glm::translate(modelHombroIzq, glm::vec3(-0.033f, 0.092f, 0.019f));
+		modelHombroIzq = glm::rotate(modelHombroIzq, armSwingL * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelHombroIzq));
+		hombro_izq.RenderModel();
+
+		//mano izq
+		modelManoIzq = modelHombroIzq;
+		modelManoIzq = glm::translate(modelManoIzq, glm::vec3(-0.059f, -0.045f, 0.002f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelManoIzq));
+		mano_izq.RenderModel();
+
+		//muslo der
+		modelMusloDer = modelTorso;
+		modelMusloDer = glm::translate(modelMusloDer, glm::vec3(0.025f, -0.073f, 0.002f));
+		modelMusloDer = glm::rotate(modelMusloDer, legSwingR * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMusloDer));
+		muslo_der.RenderModel();
+
+		// tibia der
+		modelTibiaDer = modelMusloDer;
+		modelTibiaDer = glm::translate(modelTibiaDer, glm::vec3(-0.007f, -0.119f, 0.005f));
+		modelTibiaDer = glm::rotate(modelTibiaDer, -kneeBendR * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelTibiaDer));
+		tibia_der.RenderModel();
+
+		// pie der
+		modelPieDer = modelTibiaDer;
+		modelPieDer = glm::translate(modelPieDer, glm::vec3(-0.005f, -0.145f, 0.018f));
+		modelPieDer = glm::rotate(modelPieDer, (kneeBendR * 0.5f) * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelPieDer));
+		pie_der.RenderModel();
+
+		// muslo izq
+		modelMusloIzq = modelTorso;
+		modelMusloIzq = glm::translate(modelMusloIzq, glm::vec3(-0.027f, -0.076f, 0.001f));
+		modelMusloIzq = glm::rotate(modelMusloIzq, legSwingL * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMusloIzq));
+		muslo_izq.RenderModel();
+
+		// tibia izq
+		modelTibiaIzq = modelMusloIzq;
+		modelTibiaIzq = glm::translate(modelTibiaIzq, glm::vec3(0.007f, -0.117f, 0.008f));
+		modelTibiaIzq = glm::rotate(modelTibiaIzq, -kneeBendL * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelTibiaIzq));
+		tibia_izq.RenderModel();
+
+		//pie izq
+		modelPieIzq = modelTibiaIzq;
+		modelPieIzq = glm::translate(modelPieIzq, glm::vec3(0.008f, -0.143f, 0.015f));
+		modelPieIzq = glm::rotate(modelPieIzq, (kneeBendL * 0.5f) * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelPieIzq));
+		pie_izq.RenderModel();
+
+		//Los shaders  shader_hojas.frag y shader_hojas.vert no estan en la carpeta de shaders porque
+		// por alguna razon si los teo ahi se rompe asi esos se quedan ahi
+		// ====================================== SHADER HOJAS===================================//
+		shaderHojas.UseShader();
+		uniformModel = shaderHojas.GetModelLocation();
+		uniformProjection = shaderHojas.GetProjectionLocation();
+		uniformView = shaderHojas.GetViewLocation();
+		uniformEyePosition = shaderHojas.GetEyePositionLocation();
+		uniformSpecularIntensity = shaderHojas.GetSpecularIntensityLocation();
+		uniformShininess = shaderHojas.GetShininessLocation();
+
+		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
+		glUniform3f(uniformEyePosition,
+			camera.getCameraPosition().x,
+			camera.getCameraPosition().y,
+			camera.getCameraPosition().z);
+
+		shaderHojas.SetDirectionalLight(&mainLight);
+		shaderHojas.SetPointLights(pointLights, pointLightCount);
+		shaderHojas.SetSpotLights(spotLights, spotLightCount);
+
+		GLuint uniformTime = shaderHojas.GetTimeLocation();
+		glUniform1f(uniformTime, (GLfloat)glfwGetTime());
+
+		model = modelSantuario;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glDisable(GL_CULL_FACE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		hojas.RenderModel();
+		glDisable(GL_BLEND);
+		glEnable(GL_CULL_FACE);
+
+		// Render de arbusto2 
+		model = modelSantuario;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+		glDisable(GL_CULL_FACE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		arbusto2.RenderModel();
+		glDisable(GL_BLEND);
+		glEnable(GL_CULL_FACE);
+
+		//render arbusto
+		model = modelSantuario;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+		glDisable(GL_CULL_FACE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		arbusto.RenderModel();
+		glDisable(GL_BLEND);
+		glEnable(GL_CULL_FACE);
+
+		// =========================TERMINAN RENDERIZADOS FERNANDO============================ //
+
 
 
 

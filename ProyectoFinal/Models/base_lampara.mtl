@@ -1,0 +1,26 @@
+# Blender 5.0.1 MTL File: 'Narukami Shrine.blend'
+# www.blender.org
+
+newmtl Concrete_Floor
+Ns 36.446281
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_refl Tex_0008_M.png
+map_Bump -bm 1.000000 Tex_0008_N.png
+
+newmtl Lamps_A
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Tex_0004.png
+map_refl Tex_0004_M.png
+map_Bump -bm 1.000000 Tex_0004_N.png
