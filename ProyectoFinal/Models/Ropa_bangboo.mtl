@@ -1,0 +1,14 @@
+# Blender 5.0.1 MTL File: 'None'
+# www.blender.org
+
+newmtl base2.001
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/Users/otake/OneDrive/Desktop/Proyecto Final Gráfica/ProyectoFinal/ProyectoFinal/Textures/JaneBangboo_Metallic.png
+map_Ns A:/blender/Bangboo/maps/JaneBangboo_base2_Roughness.1002.png
+map_refl A:/blender/Bangboo/maps/JaneBangboo_base2_Metallic.1002.png
+map_Bump -bm 1.000000 A:/blender/Bangboo/maps/JaneBangboo_base2_Normal.1002.png
